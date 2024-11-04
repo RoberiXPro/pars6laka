@@ -12,16 +12,16 @@
         align-items: center;
         justify-content: center;
         min-height: 100vh;
-        background: linear-gradient(135deg, #3a3a47, #2a2a38);
+        background: linear-gradient(135deg, #2d2d3a, #1f1f28);
         font-family: 'Arial', sans-serif;
-        color: #e6e6e6;
+        color: #e0e0e0;
         margin: 0;
     }
 
     #login-container, #chat-container {
         width: 70%;
         max-width: 800px;
-        background: rgba(50, 50, 70, 0.85);
+        background: rgba(45, 45, 60, 0.9);
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.4);
@@ -35,7 +35,7 @@
 
     #reply-container {
         display: none;
-        background-color: #3b3b5a;
+        background-color: #3c3c4f;
         padding: 5px;
         border-radius: 5px;
         margin-bottom: 10px;
@@ -43,7 +43,7 @@
     }
 
     .reply-btn {
-        background-color: #4a90e2;
+        background-color: #3b82f6;
         color: white;
         border: none;
         border-radius: 5px;
@@ -53,13 +53,13 @@
     }
 
     .reply-btn:hover {
-        background-color: #357ab7;
+        background-color: #2b6cb0;
     }
 
     #user-list {
         margin-top: 15px;
         padding: 10px;
-        background-color: #363656;
+        background-color: #333;
         border-radius: 10px;
         color: #b3d7ff;
         width: 100%;
@@ -68,54 +68,13 @@
         text-align: left;
     }
 
-    #user-list h2 {
-        font-size: 1.2em;
-        margin-bottom: 10px;
-        color: #b3d7ff;
-        text-align: center;
-        text-shadow: 0 2px 5px rgba(179, 215, 255, 0.4);
-    }
-
-    #online-users {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        max-height: 200px;
-        overflow-y: auto;
-    }
-
     #online-users li {
         display: flex;
         align-items: center;
         padding: 8px;
         margin-bottom: 5px;
         border-radius: 5px;
-        background-color: #4b4b67;
-        transition: background-color 0.3s ease;
-    }
-
-    #online-users li:hover {
-        background-color: #5a5a76;
-    }
-
-    .user-status {
-        font-weight: bold;
-        color: #d6e4ff;
-        font-size: 1em;
-        margin-left: 10px;
-    }
-
-    .status-indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 10px;
-        background-color: #52b788;
-        transition: background-color 0.3s ease;
-    }
-
-    .status-offline .status-indicator {
-        background-color: #808080;
+        background-color: #4a4a5f;
     }
 
     input, button {
@@ -130,39 +89,44 @@
     input {
         width: 100%;
         margin-bottom: 10px;
-        background-color: #3f3f57;
-        color: #e6e6e6;
+        background-color: #333;
+        color: #e0e0e0;
     }
 
     button {
-        background-color: #565678;
-        color: #e6e6e6;
+        background-color: #3c3c50;
+        color: white;
         cursor: pointer;
         transition: background-color 0.3s;
     }
 
     button:hover {
-        background-color: #4a4a65;
+        background-color: #2c2c3c;
     }
 
-    #emoji-picker, .emoji-picker-message {
+    #emoji-picker {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
         max-width: 200px;
-        background-color: #35354f;
+        background-color: #333;
         border-radius: 10px;
         padding: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         position: absolute;
+        bottom: 10px;
+        right: 10px;
     }
 
     .emoji-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
         font-size: 1rem;
         cursor: pointer;
         background: transparent;
         border: none;
-        color: #b3d7ff;
+        color: #3b82f6;
         transition: transform 0.2s ease;
     }
 
@@ -185,7 +149,7 @@
         max-height: 300px;
         overflow-y: auto;
         padding: 10px;
-        background-color: #29293d;
+        background-color: #1f1f28;
         border-radius: 5px;
         margin-bottom: 10px;
     }
@@ -196,7 +160,7 @@
         border-radius: 5px;
         word-wrap: break-word;
         max-width: 70%;
-        color: #e6e6e6;
+        color: #e0e0e0;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -204,13 +168,13 @@
     }
 
     .message.user1 {
-        background: linear-gradient(to right, #6a1b9a, #8e24aa);
+        background-color: #3a3a4f;
         align-self: flex-end;
         border-radius: 10px 10px 0 10px;
     }
 
     .message.user2 {
-        background: linear-gradient(to right, #5a5a5f, #4a4a4f);
+        background-color: #2e2e3f;
         align-self: flex-start;
         border-radius: 10px 10px 10px 0;
     }
@@ -219,26 +183,10 @@
         margin-bottom: 5px;
     }
 
-    .reaction-container {
-        margin-top: 5px;
-        display: flex;
-        align-items: center;
+    .username.user1, .username.user2 {
         font-size: 0.9rem;
-        color: #b3d7ff;
-    }
-
-    .username.user1 {
-        color: #ffffff;
-        background: linear-gradient(135deg, #6a1b9a, #8e24aa);
-        padding: 5px 8px;
-        border-radius: 6px;
-    }
-
-    .username.user2 {
-        color: #ffffff;
-        background: linear-gradient(135deg, #ff8a65, #ff7043);
-        padding: 5px 8px;
-        border-radius: 6px;
+        font-weight: bold;
+        color: #e0e0e0;
     }
 
     h1 {
@@ -246,7 +194,7 @@
         color: #b3d7ff;
         padding: 20px 40px;
         border-radius: 15px;
-        background: linear-gradient(135deg, #7b1fa2, #512da8, #303f9f);
+        background: linear-gradient(135deg, #3a3a4f, #2e2e3f);
         box-shadow: 0 0 15px rgba(179, 215, 255, 0.4), 0 0 30px rgba(179, 215, 255, 0.3);
         text-align: center;
         transition: transform 0.3s ease;
@@ -256,24 +204,35 @@
         transform: scale(1.05);
     }
 
-    .action-buttons button {
-        background-color: #6a1b9a;
-        color: #e6e6e6;
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+    }
+
+    .action-buttons .btn-reply {
+        background-color: #3b82f6;
+        color: #e0e0e0;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         padding: 5px;
     }
 
-    .action-buttons button:hover {
-        background-color: #512da8;
+    .action-buttons .btn-reply:hover {
+        background-color: #2b6cb0;
     }
 
-    .reaction-emoji {
-        font-size: 1.2rem;
-        margin-right: 5px;
-        cursor: default;
-        display: inline-block;
+    .action-buttons .btn-delete {
+        background-color: #e53e3e;
+        color: #e0e0e0;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .action-buttons .btn-delete:hover {
+        background-color: #c53030;
     }
 
     /* Media queries */
@@ -306,6 +265,7 @@
         }
     }
 </style>
+
 
 </head>
 <body>
