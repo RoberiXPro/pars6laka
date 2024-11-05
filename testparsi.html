@@ -1034,7 +1034,6 @@ function deleteMessage(msgDiv, key) {
             document.title = '💬 Nouveau message!';
             notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
         }
-    }
 
     document.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'visible') {
