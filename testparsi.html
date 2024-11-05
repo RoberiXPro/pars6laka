@@ -730,7 +730,16 @@ function displayMessage(key, data) {
         seenIndicator.textContent = "Vu";
         seenIndicator.style.display = data.seen ? "block" : "none"; // Affiche "Vu" si message vu
         msgDiv.appendChild(seenIndicator);
-    }
+        
+    // Ajouter un écouteur pour surveiller les changements de `seen` dans Firebase
+    db.child("messages/" + key + "/seen").on("value", function(snapshot) {
+        if (snapshot.val() === true) {
+            seenIndicator.style.display = "block";
+        } else {
+            seenIndicator.style.display = "none";
+        }
+    });
+}
 
     // Enregistrer le survol comme "Vu" pour les messages reçus
     if (data.user !== username) {
@@ -837,6 +846,7 @@ function displayMessage(key, data) {
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
 }
+   
 
 // Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
 function startDeletionTimer(msgDiv, key) {
