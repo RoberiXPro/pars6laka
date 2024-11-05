@@ -493,13 +493,6 @@ function initializeUserListeners() {
         updateUserStatusUI(user, status);
     });
 
-     // Écoute les changements de statut d'utilisateur
-    usersRef.on("child_changed", function(snapshot) {
-        const user = snapshot.key;
-        const status = snapshot.val().status;
-        updateUserStatusUI(user, status);
-    });
-
    // Écoute les suppressions d'utilisateurs pour les retirer de l'interface
     usersRef.on("child_removed", function(snapshot) {
         const user = snapshot.key;
@@ -531,38 +524,38 @@ function setOnlineStatus() {
 }
 
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
+// Met à jour l'affichage des utilisateurs connectés
 function updateUserStatusUI(user, status) {
     let userElement = document.getElementById("user-status-" + user);
 
     if (!userElement) {
-        userElement = document.createElement("li");
-        userElement.id = "user-status-" + user;
-        userElement.classList.add(status === "en ligne" ? "status-online" : "status-offline");
+        // Crée un élément uniquement pour les utilisateurs en ligne
+        if (status === "online") {
+            userElement = document.createElement("li");
+            userElement.id = "user-status-" + user;
 
-        const statusIndicator = document.createElement("span");
-        statusIndicator.classList.add("status-indicator");
-        userElement.appendChild(statusIndicator);
+            const statusIndicator = document.createElement("span");
+            statusIndicator.classList.add("status-indicator");
+            statusIndicator.style.backgroundColor = "green";  // Vert pour les utilisateurs en ligne
+            userElement.appendChild(statusIndicator);
 
-        const userNameText = document.createElement("span");
-        userNameText.classList.add("user-status");
-        userNameText.textContent = user + " - " + status;
-        userElement.appendChild(userNameText);
+            const userNameText = document.createElement("span");
+            userNameText.classList.add("user-status");
+            userNameText.textContent = user;
+            userElement.appendChild(userNameText);
 
-        document.getElementById("online-users").appendChild(userElement);
-    } else {
-        userElement.classList.toggle("status-online", status === "en ligne");
-        userElement.classList.toggle("status-offline", status !== "en ligne");
-        userElement.querySelector(".user-status").textContent = user + " - " + status;
+            document.getElementById("online-users").appendChild(userElement);
+        }
     }
 }
     
+// Supprime l'utilisateur de l'interface dès qu'il se déconnecte
 function removeUserFromUI(user) {
     const userElement = document.getElementById("user-status-" + user);
     if (userElement) {
         userElement.remove();
     }
 }
-
     function switchToChat() {
         document.getElementById("login-container").style.display = "none";
         document.getElementById("chat-container").style.display = "block";
@@ -682,7 +675,7 @@ function loadMessages() {
 //Bouton Quitter
   function quitRoom() {
     // Supprime l'utilisateur de Firebase
-    firebase.database().ref("users/" + username).remove();
+        firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username).remove();
 
     // Supprime le listener de messages pour éviter les doublons
     if (messageListener) {
