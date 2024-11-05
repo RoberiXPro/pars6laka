@@ -681,7 +681,18 @@ function loadMessages() {
                 sendMessage();
             }
         });
+        
+    // Gestionnaire pour visibilitychange
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+            document.title = 'TEST-Villa - Room sécurisé';
+        } else {
+            // Affiche l'icône de notification si un nouveau message est reçu
+            document.title = '💬 Nouveau message!';
+            notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
+        }
     });
+});
 //Bouton Quitter
   function quitRoom() {
     // Supprime l'utilisateur de Firebase
@@ -742,6 +753,8 @@ function displayMessage(key, data) {
                     seenIndicator.style.display = "block"; // Affiche immédiatement l’indicateur
                 })
                 .catch(error => console.error("Erreur lors de la mise à jour de 'seen':", error));
+     // Démarre le minuteur de suppression
+        startDeletionTimer(msgDiv, key);
         };
 
         msgDiv.onmouseleave = function() {
@@ -843,7 +856,7 @@ function displayMessage(key, data) {
 }
 
 
-// Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
+// Fonction pour démarrer un compte à rebours de 60 secondes avant la suppression
 function startDeletionTimer(msgDiv, key) {
     setTimeout(function() {
         deleteMessage(msgDiv, key);
@@ -855,7 +868,7 @@ function deleteMessage(msgDiv, key) {
     msgDiv.classList.add("fondu"); // Optionnel : ajout d'un effet visuel de fondu
     setTimeout(function() {
         msgDiv.remove();
-        db.child("messages/" + key).remove(); // Suppression dans Firebase
+        db.child("rooms/testRoom/messages/" + key).remove(); // Suppression dans Firebase
     }, 1000); // Délai pour l'animation, si nécessaire
 }
 
@@ -867,7 +880,7 @@ function deleteMessage(msgDiv, key) {
     function prepareReply(key, message) {
         replyMessageId = key;
         replyMessageText = message;
-        document.getElementById("reply-message").textContent = "Réponse à : " + message;
+        document.getElementById("reply-message").textContent = "Réponse de : " + message;
         document.getElementById("reply-container").style.display = "block";
     }
 
