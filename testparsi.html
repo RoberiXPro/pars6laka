@@ -723,30 +723,30 @@ function displayMessage(key, data) {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
-    // Indicateur "Vu" pour les messages envoyés
-    if (data.user === username) {
-        var seenIndicator = document.createElement("span");
-        seenIndicator.className = "seen-indicator";
-        seenIndicator.textContent = "Vu";
-        seenIndicator.style.display = data.seen ? "block" : "none"; // Affiche "Vu" si message vu
-        msgDiv.appendChild(seenIndicator);
-        
+   // Indicateur "Vu" pour les messages envoyés
+    var seenIndicator = document.createElement("span");
+    seenIndicator.className = "seen-indicator";
+    seenIndicator.textContent = "Vu";
+    seenIndicator.style.display = data.seen ? "block" : "none";
+    msgDiv.appendChild(seenIndicator);
+
     // Ajouter un écouteur pour surveiller les changements de `seen` dans Firebase
     db.child("messages/" + key + "/seen").on("value", function(snapshot) {
+        console.log("État vu pour le message", key, ":", snapshot.val());
         if (snapshot.val() === true) {
             seenIndicator.style.display = "block";
         } else {
             seenIndicator.style.display = "none";
-            console.log("Indicateur `Vu` masqué pour le message :", key);
         }
     });
-}
 
-    // Enregistrer le survol comme "Vu" pour les messages reçus
+    // Mettre à jour "Vu" pour les messages reçus
     if (data.user !== username) {
         msgDiv.onmouseover = function() {
             textSpan.classList.remove("flou");
-            db.child("messages/" + key).update({ seen: true }); // Mettre à jour le statut "Vu"
+            db.child("messages/" + key).update({ seen: true })
+                .then(() => console.log("Message vu mis à jour :", key))
+                .catch(error => console.error("Erreur lors de la mise à jour de 'seen':", error));
         };
     }
 
@@ -754,6 +754,9 @@ function displayMessage(key, data) {
         textSpan.classList.add("flou");
     };
 
+    document.getElementById("messages").appendChild(msgDiv);
+    scrollToBottom();
+    
     // Ajoutez un conteneur de réactions
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
@@ -823,13 +826,11 @@ function displayMessage(key, data) {
     actionButtons.appendChild(deleteBtn);
     msgDiv.appendChild(actionButtons);
 
-    document.getElementById("messages").appendChild(msgDiv);
-
     setTimeout(function() {
         textSpan.classList.add("flou");
     }, 15000);
 
-    scrollToBottom();
+
 
     msgDiv.onmouseover = function() {
         textSpan.classList.remove("flou");
@@ -838,16 +839,12 @@ function displayMessage(key, data) {
             startDeletionTimer(msgDiv, key); 
         }
     };
-    msgDiv.onmouseleave = function() {
-        textSpan.classList.add("flou");
-    };
 
     if (data.user !== username && document.visibilityState === 'hidden') {
         document.title = '💬 Nouveau message!';
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
 }
-   
 
 // Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
 function startDeletionTimer(msgDiv, key) {
