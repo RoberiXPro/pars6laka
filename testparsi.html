@@ -329,7 +329,66 @@
         cursor: pointer;
         padding: 5px;
     }
+/* Styles de base pour le sélecteur de mode */
+#privacy-mode-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #ffd700;
+}
 
+/* Styles pour chaque mode */
+#privacy-mode-selector label {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#privacy-mode-selector input[type="radio"] {
+    display: none; /* Cache les boutons radio */
+}
+
+#privacy-mode-selector label[for="normal"] {
+    background-color: #4a4a5f;
+    color: #e6e6e6;
+}
+#privacy-mode-selector label[for="soft"] {
+    background-color: #617988;
+    color: #e6e6e6;
+}
+#privacy-mode-selector label[for="extreme"] {
+    background-color: #782b00;
+    color: #ffd700;
+}
+/* Styles pour les messages en fonction du mode de discrétion */
+.message.normal {
+    border: 2px solid #4a4a5f; /* Bordure discrète pour mode normal */
+}
+.message.soft {
+    border: 2px solid #617988; /* Bordure plus visible pour mode privée soft */
+}
+.message.extreme {
+    border: 2px solid #782b00; /* Bordure marquée pour mode privée extrême */
+}
+
+/* Effet fondu en sortie pour les messages en mode extrême */
+.message.extreme.fondu {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+/* Couleur de survol pour chaque mode */
+#privacy-mode-selector label:hover {
+    filter: brightness(1.2);
+}
+
+/* Style lorsque le bouton radio est sélectionné */
+#privacy-mode-selector input[type="radio"]:checked + label {
+    border: 2px solid #ffd700;
+    color: #fff;
+    font-weight: bold;
+}
     .action-buttons .btn-delete:hover {
         background-color: #d32f2f;
     }
@@ -395,6 +454,11 @@
         </div>
 
         <div id="messages"></div>
+        <div id="privacy-mode-selector">
+    <label><input type="radio" name="privacy-mode" value="normal" checked> Mode Normal (1h30)</label>
+    <label><input type="radio" name="privacy-mode" value="soft"> Mode Privée Soft (30 min)</label>
+    <label><input type="radio" name="privacy-mode" value="extreme"> Mode Privée Extrême (20 sec)</label>
+</div>
         <div id="input-section">
             <button onclick="toggleEmojiPicker()">😊</button>
             <input type="text" id="message-input" placeholder="Écrivez un message">
@@ -572,6 +636,8 @@ function removeUserFromUI(user) {
     function sendMessage() {
         var messageInput = document.getElementById("message-input");
         var message = messageInput.value;
+        var mode = document.querySelector('input[name="privacy-mode"]:checked').value; // Récupère le mode sélectionné
+
 
         if (message.trim() === "") {
             return;
@@ -583,6 +649,7 @@ function removeUserFromUI(user) {
             "user": username, 
             "message": message, 
             "timestamp": timestamp,
+            "mode": mode,  // Enregistre le mode de discrétion
             "reactions": {}
         };
         
@@ -720,6 +787,52 @@ function loadMessages() {
         msgDiv.appendChild(timeDiv);
         msgDiv.appendChild(textSpan);
 
+            // Démarre la suppression après lecture, selon le mode
+    msgDiv.onmouseover = function() {
+        if (textSpan.classList.contains("flou")) {
+            textSpan.classList.remove("flou");
+            startDeletionTimer(msgDiv, key, data.mode);
+        }
+    };
+ // Ajout des classes spécifiques en fonction du mode de discrétion
+    msgDiv.classList.add(data.mode); // Classe pour mode spécifique
+    document.getElementById("messages").appendChild(msgDiv);
+    scrollToBottom();
+}
+
+// Fonction pour lancer le compte à rebours en fonction du mode sélectionné
+function startDeletionTimer(msgDiv, key, mode) {
+    let deleteTime;
+
+    switch (mode) {
+        case "extreme":
+            deleteTime = 20000; // 20 secondes pour Mode Privée Extrême
+            break;
+        case "soft":
+            deleteTime = 1800000; // 30 minutes pour Mode Privée Soft
+            break;
+        case "normal":
+            deleteTime = 5400000; // 1 heure 30 minutes pour Mode Normal
+            break;
+        default:
+            deleteTime = 5400000; // Par défaut : Mode Normal
+    }
+
+    setTimeout(function() {
+        if (document.visibilityState === "visible") { // Supprime seulement si l’utilisateur est actif
+            deleteMessage(msgDiv, key);
+        }
+    }, deleteTime);
+}
+
+// Fonction de suppression de message
+function deleteMessage(msgDiv, key) {
+    msgDiv.classList.add("fondu");
+    setTimeout(function() {
+        msgDiv.remove();
+        db.child("messages/" + key).remove(); // Suppression dans Firebase
+    }, 1000);
+}
         var reactionContainer = document.createElement("div");
         reactionContainer.className = "reaction-container";
         msgDiv.appendChild(reactionContainer);
