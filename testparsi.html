@@ -333,7 +333,13 @@
 .action-buttons .btn-delete:hover {
     background-color: #d32f2f;
 }
-
+.seen-indicator {
+    font-size: 0.7rem;
+    color: #ccc;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
 
     /* Ajout de media queries pour adaptation aux tablettes */
     @media (max-width: 600px) {
@@ -520,10 +526,13 @@ function setOnlineStatus() {
 
             // Supprime complètement l'utilisateur de Firebase lors de la déconnexion
             userRef.onDisconnect().remove();
+  // Mise à jour de statut régulière pour réduire les déconnexions visibles
+            setInterval(() => {
+                userRef.update({ lastSeen: new Date().toISOString() });
+            }, 5000);
         }
     });
 }
-
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
 // Met à jour l'affichage des utilisateurs connectés
 function updateUserStatusUI(user, status) {
@@ -714,6 +723,25 @@ function displayMessage(key, data) {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
+    // Ajoutez ici l'indicateur "Vu" pour les messages envoyés
+    if (data.user === username) {
+        var seenIndicator = document.createElement("span");
+        seenIndicator.className = "seen-indicator";
+        seenIndicator.textContent = "Vu";
+        seenIndicator.style.display = "none"; // Masqué au départ
+        msgDiv.appendChild(seenIndicator);
+
+        msgDiv.onmouseover = function() {
+            textSpan.classList.remove("flou");
+            seenIndicator.style.display = "block"; // Affiche "Vu" au survol
+        };
+
+        msgDiv.onmouseleave = function() {
+            textSpan.classList.add("flou");
+            seenIndicator.style.display = "none"; // Cache "Vu" après survol
+        };
+    }
+
     // Ajoutez un conteneur de réactions
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
@@ -793,7 +821,11 @@ function displayMessage(key, data) {
 
     msgDiv.onmouseover = function() {
         textSpan.classList.remove("flou");
-    };
+   // Démarre le compte à rebours de suppression au survol pour les messages reçus
+    if (data.user !== username) {
+        startDeletionTimer(msgDiv, key); 
+    }
+};
     msgDiv.onmouseleave = function() {
         textSpan.classList.add("flou");
     };
