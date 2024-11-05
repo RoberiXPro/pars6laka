@@ -408,7 +408,7 @@
     </div>
 
 <script>
-    const notificationSound = new Audio('https://cdn.pixabay.com/audio/2024/10/01/audio_f76ff67c94.mp3');
+    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2574/2574-preview.mp3');
     var firebaseConfig = {
           apiKey: "AIzaSyBo0PQnrDzKZaU3GOviiRhpyGHfcPFfHVY",
           authDomain: "pars6laka.firebaseapp.com",
@@ -809,9 +809,10 @@ function loadMessages() {
 
         scrollToBottom();
 
-        msgDiv.onmouseover = function() {
-            textSpan.classList.remove("flou");
-        };
+       msgDiv.onmouseover = function() {
+    textSpan.classList.remove("flou");
+    startDeletionTimer(msgDiv, key); // Démarre le compte à rebours pour la suppression
+};
         msgDiv.onmouseleave = function() {
             textSpan.classList.add("flou");
         };
@@ -828,6 +829,22 @@ function loadMessages() {
         }
     });
 
+// Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
+function startDeletionTimer(msgDiv, key) {
+    setTimeout(function() {
+        deleteMessage(msgDiv, key);
+    }, 60000); // Supprime le message après 1 minute
+}
+
+// Fonction de suppression de message
+function deleteMessage(msgDiv, key) {
+    msgDiv.classList.add("fondu"); // Optionnel : ajout d'un effet visuel de fondu
+    setTimeout(function() {
+        msgDiv.remove();
+        db.child("messages/" + key).remove(); // Suppression dans Firebase
+    }, 1000); // Délai pour l'animation, si nécessaire
+}
+    
     function toggleEmojiPickerMessage(key) {
         const picker = document.getElementById(`emoji-picker-${key}`);
         picker.style.display = picker.style.display === "flex" ? "none" : "flex";
