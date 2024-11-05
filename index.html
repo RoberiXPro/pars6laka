@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pars6laka - Room sécurisé</title>
+    <title>Pars6 - Room sécurisé</title>
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
@@ -373,9 +373,9 @@
     <!-- Section de connexion -->
     <div id="login-container">
         <input type="text" id="username" placeholder="Votre pseudo" required><br>
-        <input type="text" id="room-name-input" placeholder="Nom de la Villa" required><br>
+        <input type="text" id="room-name-input" placeholder="Rendez-vous chez" required><br>
         <input type="password" id="password-input" placeholder="Mot de passe" required><br>
-        <button onclick="joinRoom()">Entrez dans la Villa</button>
+        <button onclick="joinRoom()">Rejoindre</button>
     </div>
 
     <!-- Section de chat -->
@@ -443,7 +443,7 @@ function joinRoom() {
             var dbPassword = snapshot.child("password").val();
             if (dbPassword === password) {
                 alert("Connexion réussie !");
-                document.getElementById("room-name-display").textContent = "Villa : " + roomName;
+                document.getElementById("room-name-display").textContent = "Lieu de Rendez-vous : " + roomName;
                 switchToChat();
 
                 // Initialiser les listeners pour afficher les utilisateurs connectés
@@ -461,7 +461,7 @@ function joinRoom() {
                 messages: {}
             }).then(() => {
                 alert("Room créé avec succès !");
-                document.getElementById("room-name-display").textContent = "Villa : " + roomName;
+                document.getElementById("room-name-display").textContent = "Lieu de Rendez-vous : " + roomName;
                 switchToChat();
 
                 // Initialiser les listeners pour afficher les utilisateurs connectés
@@ -825,7 +825,7 @@ function loadMessages() {
 
     document.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'visible') {
-            document.title = 'TEST-Villa - Room sécurisé';
+            document.title = 'Pars6 - Room sécurisé';
         }
     });
 
