@@ -723,24 +723,27 @@ function displayMessage(key, data) {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
-    // Ajoutez ici l'indicateur "Vu" pour les messages envoyés
+    // Indicateur "Vu" pour les messages envoyés
     if (data.user === username) {
         var seenIndicator = document.createElement("span");
         seenIndicator.className = "seen-indicator";
         seenIndicator.textContent = "Vu";
-        seenIndicator.style.display = "none"; // Masqué au départ
+        seenIndicator.style.display = data.seen ? "block" : "none"; // Affiche "Vu" si message vu
         msgDiv.appendChild(seenIndicator);
+    }
 
+    // Enregistrer le survol comme "Vu" pour les messages reçus
+    if (data.user !== username) {
         msgDiv.onmouseover = function() {
             textSpan.classList.remove("flou");
-            seenIndicator.style.display = "block"; // Affiche "Vu" au survol
-        };
-
-        msgDiv.onmouseleave = function() {
-            textSpan.classList.add("flou");
-            seenIndicator.style.display = "none"; // Cache "Vu" après survol
+            db.child("messages/" + key).update({ seen: true }); // Mettre à jour le statut "Vu"
         };
     }
+
+    msgDiv.onmouseleave = function() {
+        textSpan.classList.add("flou");
+    };
+}
 
     // Ajoutez un conteneur de réactions
     var reactionContainer = document.createElement("div");
