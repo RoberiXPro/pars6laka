@@ -837,8 +837,6 @@ function displayMessage(key, data) {
         document.title = '💬 Nouveau message!';
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
-}
-
 
 // Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
 function startDeletionTimer(msgDiv, key) {
