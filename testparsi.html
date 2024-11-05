@@ -483,23 +483,24 @@ firebase.database().ref("users").on("child_changed", function(snapshot) {
 });
 
 function initializeUserListeners() {
-    var usersRef = firebase.database().ref("users");
+     // Référence des utilisateurs de la salle actuelle uniquement
+    var usersRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers");
 
-    // Écoute les ajouts d'utilisateurs
+     // Écoute les ajouts d'utilisateurs dans la salle
     usersRef.on("child_added", function(snapshot) {
         const user = snapshot.key;
         const status = snapshot.val().status;
         updateUserStatusUI(user, status);
     });
 
-    // Écoute les changements de statut d'utilisateur
+     // Écoute les changements de statut d'utilisateur
     usersRef.on("child_changed", function(snapshot) {
         const user = snapshot.key;
         const status = snapshot.val().status;
         updateUserStatusUI(user, status);
     });
 
-    // Écoute les suppressions d'utilisateurs
+   // Écoute les suppressions d'utilisateurs pour les retirer de l'interface
     usersRef.on("child_removed", function(snapshot) {
         const user = snapshot.key;
         removeUserFromUI(user);
@@ -507,29 +508,28 @@ function initializeUserListeners() {
 }
 
 // Fonction pour gérer le statut en ligne et hors ligne de l'utilisateur
+// Fonction pour gérer le statut en ligne de l'utilisateur
 function setOnlineStatus() {
-    if (!username) return;
+    if (!username || !roomName) return;
 
-    // Référence pour l'utilisateur dans Firebase
-    var userRef = firebase.database().ref("users/" + username);
+    // Référence pour l'utilisateur dans Firebase, dans la salle actuelle
+    var userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
 
     // Suivi de l'état de connexion
     firebase.database().ref(".info/connected").on("value", function(snapshot) {
         if (snapshot.val() === true) {
-            // Statut en ligne et mise à jour de l'heure
-            userRef.update({
-                status: "en ligne",
+            // Définit l'utilisateur comme en ligne
+            userRef.set({
+                status: "online",
                 lastSeen: new Date().toISOString()
             });
 
-            // Définir sur "hors ligne" ou supprimer en cas de déconnexion
-            userRef.onDisconnect().update({
-                status: "hors ligne",
-                lastSeen: new Date().toISOString()
-            });
+            // Supprime complètement l'utilisateur de Firebase lors de la déconnexion
+            userRef.onDisconnect().remove();
         }
     });
 }
+
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
 function updateUserStatusUI(user, status) {
     let userElement = document.getElementById("user-status-" + user);
