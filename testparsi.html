@@ -723,16 +723,34 @@ function displayMessage(key, data) {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
-   // Indicateur "Vu" pour les messages envoyés
+    // Indicateur "Vu" pour les messages envoyés
     var seenIndicator = document.createElement("span");
     seenIndicator.className = "seen-indicator";
     seenIndicator.textContent = "Vu";
     seenIndicator.style.display = data.seen ? "block" : "none";
     msgDiv.appendChild(seenIndicator);
 
+    // Mise à jour "Vu" pour les messages reçus au survol
+    if (data.user !== username) {
+        msgDiv.onmouseover = function() {
+            textSpan.classList.remove("flou");
+
+            // Mise à jour du statut `seen` dans Firebase
+            db.child("rooms/testRoom/messages/" + key).update({ seen: true })
+                .then(() => {
+                    console.log("Message vu mis à jour :", key);
+                    seenIndicator.style.display = "block"; // Affiche immédiatement l’indicateur
+                })
+                .catch(error => console.error("Erreur lors de la mise à jour de 'seen':", error));
+        };
+
+        msgDiv.onmouseleave = function() {
+            textSpan.classList.add("flou");
+        };
+    }
+
     // Ajouter un écouteur pour surveiller les changements de `seen` dans Firebase
-    db.child("messages/" + key + "/seen").on("value", function(snapshot) {
-        console.log("État vu pour le message", key, ":", snapshot.val());
+    db.child("rooms/testRoom/messages/" + key + "/seen").on("value", function(snapshot) {
         if (snapshot.val() === true) {
             seenIndicator.style.display = "block";
         } else {
@@ -740,29 +758,16 @@ function displayMessage(key, data) {
         }
     });
 
-    // Mettre à jour "Vu" pour les messages reçus
-    if (data.user !== username) {
-        msgDiv.onmouseover = function() {
-            textSpan.classList.remove("flou");
-            db.child("messages/" + key).update({ seen: true })
-                .then(() => console.log("Message vu mis à jour :", key))
-                .catch(error => console.error("Erreur lors de la mise à jour de 'seen':", error));
-        };
-    }
-
-    msgDiv.onmouseleave = function() {
-        textSpan.classList.add("flou");
-    };
-
     document.getElementById("messages").appendChild(msgDiv);
     scrollToBottom();
-    
+
     // Ajoutez un conteneur de réactions
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
     msgDiv.appendChild(reactionContainer);
 
-    db.child("messages/" + key + "/reactions").on("value", function(snapshot) {
+    // Écouteur pour les réactions
+    db.child("rooms/testRoom/messages/" + key + "/reactions").on("value", function(snapshot) {
         reactionContainer.innerHTML = "";
         if (snapshot.exists()) {
             var reactionLabel = document.createElement("span");
@@ -819,7 +824,7 @@ function displayMessage(key, data) {
     deleteBtn.textContent = "Supprimer";
     deleteBtn.className = "btn-delete";
     deleteBtn.onclick = function() {
-        db.child("messages/" + key).remove();
+        db.child("rooms/testRoom/messages/" + key).remove();
     };
 
     actionButtons.appendChild(replyBtn);
@@ -830,21 +835,13 @@ function displayMessage(key, data) {
         textSpan.classList.add("flou");
     }, 15000);
 
-
-
-    msgDiv.onmouseover = function() {
-        textSpan.classList.remove("flou");
-        // Démarre le compte à rebours de suppression au survol pour les messages reçus
-        if (data.user !== username) {
-            startDeletionTimer(msgDiv, key); 
-        }
-    };
-
+    // Notification pour les nouveaux messages lorsque l'onglet est masqué
     if (data.user !== username && document.visibilityState === 'hidden') {
         document.title = '💬 Nouveau message!';
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
 }
+
 
 // Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
 function startDeletionTimer(msgDiv, key) {
