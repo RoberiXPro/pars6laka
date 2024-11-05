@@ -362,15 +362,16 @@
     background-color: #782b00;
     color: #ffd700;
 }
+
 /* Styles pour les messages en fonction du mode de discrétion */
 .message.normal {
-    border: 2px solid #4a4a5f; /* Bordure discrète pour mode normal */
+    border: 2px solid #4a4a5f;
 }
 .message.soft {
-    border: 2px solid #617988; /* Bordure plus visible pour mode privée soft */
+    border: 2px solid #617988;
 }
 .message.extreme {
-    border: 2px solid #782b00; /* Bordure marquée pour mode privée extrême */
+    border: 2px solid #782b00;
 }
 
 /* Effet fondu en sortie pour les messages en mode extrême */
@@ -455,9 +456,10 @@
 
         <div id="messages"></div>
         <div id="privacy-mode-selector">
-    <label><input type="radio" name="privacy-mode" value="normal" checked> Mode Normal (1h30)</label>
-    <label><input type="radio" name="privacy-mode" value="soft"> Mode Privée Soft (30 min)</label>
-    <label><input type="radio" name="privacy-mode" value="extreme"> Mode Privée Extrême (20 sec)</label>
+<label for="normal"><input type="radio" name="privacy-mode" id="normal" value="normal" checked> Mode Normal (1h30)</label>
+<label for="soft"><input type="radio" name="privacy-mode" id="soft" value="soft"> Mode Privée Soft (30 min)</label>
+<label for="extreme"><input type="radio" name="privacy-mode" id="extreme" value="extreme"> Mode Privée Extrême (20 sec)</label>
+
 </div>
         <div id="input-section">
             <button onclick="toggleEmojiPicker()">😊</button>
