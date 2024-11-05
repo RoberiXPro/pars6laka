@@ -743,7 +743,6 @@ function displayMessage(key, data) {
     msgDiv.onmouseleave = function() {
         textSpan.classList.add("flou");
     };
-}
 
     // Ajoutez un conteneur de réactions
     var reactionContainer = document.createElement("div");
@@ -824,11 +823,11 @@ function displayMessage(key, data) {
 
     msgDiv.onmouseover = function() {
         textSpan.classList.remove("flou");
-   // Démarre le compte à rebours de suppression au survol pour les messages reçus
-    if (data.user !== username) {
-        startDeletionTimer(msgDiv, key); 
-    }
-};
+        // Démarre le compte à rebours de suppression au survol pour les messages reçus
+        if (data.user !== username) {
+            startDeletionTimer(msgDiv, key); 
+        }
+    };
     msgDiv.onmouseleave = function() {
         textSpan.classList.add("flou");
     };
@@ -837,6 +836,7 @@ function displayMessage(key, data) {
         document.title = '💬 Nouveau message!';
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
+}
 
 // Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
 function startDeletionTimer(msgDiv, key) {
