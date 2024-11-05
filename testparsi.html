@@ -790,6 +790,9 @@ function displayMessage(key, data) {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
+    // Ajout des classes spécifiques en fonction du mode de discrétion
+    msgDiv.classList.add(data.mode); // Applique le mode comme classe
+
     // Démarre la suppression après lecture, selon le mode
     msgDiv.onmouseover = function() {
         if (textSpan.classList.contains("flou")) {
@@ -798,9 +801,7 @@ function displayMessage(key, data) {
         }
     };
 
-    // Ajout des classes spécifiques en fonction du mode de discrétion
-    msgDiv.classList.add(data.mode); // Classe pour mode spécifique
-
+    // Gestion des réactions
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
     msgDiv.appendChild(reactionContainer);
@@ -821,6 +822,7 @@ function displayMessage(key, data) {
         }
     });
 
+    // Gestion des réponses
     if (data.replyTo) {
         var replyDiv = document.createElement("div");
         replyDiv.className = "citation flou";
@@ -836,6 +838,7 @@ function displayMessage(key, data) {
         }, 15000);
     }
 
+    // Bouton emoji
     var emojiBtn = document.createElement("button");
     emojiBtn.className = "emoji-btn";
     emojiBtn.textContent = "😀";
@@ -861,6 +864,7 @@ function displayMessage(key, data) {
 
     msgDiv.appendChild(emojiPickerMessage);
 
+    // Boutons d'action
     var actionButtons = document.createElement("div");
     actionButtons.className = "action-buttons";
 
@@ -884,6 +888,7 @@ function displayMessage(key, data) {
 
     document.getElementById("messages").appendChild(msgDiv);
 
+    // Gestion du flou et du son pour les nouveaux messages
     setTimeout(function() {
         textSpan.classList.add("flou");
     }, 15000);
@@ -901,7 +906,8 @@ function displayMessage(key, data) {
         document.title = '💬 Nouveau message!';
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
-} // Fin de displayMessage
+}
+
     
 // Fonction pour lancer le compte à rebours en fonction du mode sélectionné
 function startDeletionTimer(msgDiv, key, mode) {
@@ -921,8 +927,10 @@ function startDeletionTimer(msgDiv, key, mode) {
             deleteTime = 5400000; // Par défaut : Mode Normal
     }
 
+    console.log("Mode:", mode, "Temps de suppression:", deleteTime); // Vérification du mode et de la durée
+
     setTimeout(function() {
-        if (document.visibilityState === "visible") { // Supprime seulement si l’utilisateur est actif
+        if (document.visibilityState === "visible") {
             deleteMessage(msgDiv, key);
         }
     }, deleteTime);
