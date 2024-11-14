@@ -759,20 +759,21 @@ function loadMessages() {
         };
         msgDiv.appendChild(emojiBtn);
 
-        var emojiPickerMessage = document.createElement("div");
-        emojiPickerMessage.className = "emoji-picker-message";
-        emojiPickerMessage.id = `emoji-picker-${key}`;
+    // Dans displayMessage(), pour chaque message
+var emojiPickerMessage = document.createElement("div");
+emojiPickerMessage.className = "emoji-picker-message";
+emojiPickerMessage.id = `emoji-picker-${key}`; // ID unique par message
 
-        emojis.forEach((emoji) => {
-            const emojiSpan = document.createElement("span");
-            emojiSpan.textContent = emoji;
-            emojiSpan.className = "emoji";
-            emojiSpan.onclick = function () {
-                addReactionEmoji(key, emoji);
-                emojiPickerMessage.style.display = "none";
-            };
-            emojiPickerMessage.appendChild(emojiSpan);
-        });
+emojis.forEach((emoji) => {
+    const emojiSpan = document.createElement("span");
+    emojiSpan.textContent = emoji;
+    emojiSpan.className = "emoji";
+    emojiSpan.onclick = function () {
+        addReactionEmoji(key, emoji); // Associe l'emoji au message
+        emojiPickerMessage.style.display = "none"; // Cache après sélection
+    };
+    emojiPickerMessage.appendChild(emojiSpan);
+});
 
         msgDiv.appendChild(emojiPickerMessage);
 
@@ -851,10 +852,13 @@ function deleteMessage(msgDiv, key) {
     }, 1000); // Délai pour l'animation, si nécessaire
 }
     
-    function toggleEmojiPickerMessage(key) {
-        const picker = document.getElementById(`emoji-picker-${key}`);
+    // Fonction toggleEmojiPickerMessage pour cibler le bon emoji picker par message
+function toggleEmojiPickerMessage(key) {
+    const picker = document.getElementById(`emoji-picker-${key}`);
+    if (picker) {
         picker.style.display = picker.style.display === "flex" ? "none" : "flex";
     }
+}
 
     function prepareReply(key, message) {
     replyMessageId = key; // Enregistre l'ID du message auquel on répond
