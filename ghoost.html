@@ -442,7 +442,7 @@ function joinRoom() {
             var dbPassword = snapshot.child("password").val();
             if (dbPassword === password) {
                 alert("Connexion réussie !");
-                document.getElementById("room-name-display").textContent = "Lieu de Rendez-vous : " + roomName;
+                document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
                 switchToChat();
 
                 // Initialiser les listeners pour afficher les utilisateurs connectés
@@ -460,7 +460,7 @@ function joinRoom() {
                 messages: {}
             }).then(() => {
                 alert("Room créé avec succès !");
-                document.getElementById("room-name-display").textContent = "Lieu de Rendez-vous : " + roomName;
+                document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
                 switchToChat();
 
                 // Initialiser les listeners pour afficher les utilisateurs connectés
@@ -749,7 +749,7 @@ function quitRoom() {
         replyDiv.style.padding = "5px";
         replyDiv.style.marginBottom = "5px";
         replyDiv.style.borderRadius = "5px";
-        replyDiv.textContent = "Réponse à : " + data.replyTo;
+        replyDiv.textContent = "Réponse du : " + data.replyTo;
         msgDiv.appendChild(replyDiv);
 
         setTimeout(function() {
@@ -861,7 +861,7 @@ function toggleEmojiPickerMessage(key) {
     function prepareReply(key, message) {
     replyMessageId = key; // Enregistre l'ID du message auquel on répond
     replyMessageText = message; // Enregistre le texte du message pour la citation
-    document.getElementById("reply-message").textContent = "Réponse à : " + message; // Affiche la citation
+    document.getElementById("reply-message").textContent = "Réponse du : " + message; // Affiche la citation
     document.getElementById("reply-container").style.display = "block"; // Affiche le conteneur de réponse
 }
 
