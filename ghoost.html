@@ -483,9 +483,8 @@ firebase.database().ref("users").on("child_changed", function(snapshot) {
 });
 
 function initializeUserListeners() {
-    var usersRef = firebase.database().ref("users");
+    var usersRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers");
 
-    // Écoute les ajouts d'utilisateurs
     usersRef.on("child_added", function(snapshot) {
         const user = snapshot.key;
         const status = snapshot.val().status;
@@ -500,7 +499,7 @@ function initializeUserListeners() {
     });
 
     // Écoute les suppressions d'utilisateurs
-    usersRef.on("child_removed", function(snapshot) {
+  usersRef.on("child_removed", function(snapshot) {
         const user = snapshot.key;
         removeUserFromUI(user);
     });
@@ -508,28 +507,24 @@ function initializeUserListeners() {
 
 // Fonction pour gérer le statut en ligne et hors ligne de l'utilisateur
 function setOnlineStatus() {
-    if (!username) return;
+    if (!username || !roomName) return;
 
-    // Référence pour l'utilisateur dans Firebase
-    var userRef = firebase.database().ref("users/" + username);
+    var userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
 
-    // Suivi de l'état de connexion
     firebase.database().ref(".info/connected").on("value", function(snapshot) {
         if (snapshot.val() === true) {
-            // Statut en ligne et mise à jour de l'heure
-            userRef.update({
+            userRef.set({
                 status: "en ligne",
                 lastSeen: new Date().toISOString()
             });
-
-            // Définir sur "hors ligne" ou supprimer en cas de déconnexion
-            userRef.onDisconnect().update({
-                status: "hors ligne",
-                lastSeen: new Date().toISOString()
-            });
+            userRef.onDisconnect().remove();
+            setInterval(() => {
+                userRef.update({ lastSeen: new Date().toISOString() });
+            }, 5000);
         }
     });
 }
+
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
 function updateUserStatusUI(user, status) {
     let userElement = document.getElementById("user-status-" + user);
@@ -794,8 +789,8 @@ function loadMessages() {
         deleteBtn.textContent = "Supprimer";
         deleteBtn.className = "btn-delete";
         deleteBtn.onclick = function() {
-            db.child("messages/" + key).remove();
-        };
+             db.child("rooms/" + roomName + "/messages/" + key).remove(); // Supprime le message dans la salle actuelle
+};
 
         actionButtons.appendChild(replyBtn);
         actionButtons.appendChild(deleteBtn);
@@ -850,19 +845,19 @@ function deleteMessage(msgDiv, key) {
         picker.style.display = picker.style.display === "flex" ? "none" : "flex";
     }
 
-    function prepareReply(key, message) {
-        replyMessageId = key;
-        replyMessageText = message;
-        document.getElementById("reply-message").textContent = "Réponse à : " + message;
-        document.getElementById("reply-container").style.display = "block";
-    }
+    unction prepareReply(key, message) {
+    replyMessageId = key; // Enregistre l'ID du message auquel on répond
+    replyMessageText = message; // Enregistre le texte du message pour la citation
+    document.getElementById("reply-message").textContent = "Réponse à : " + message; // Affiche la citation
+    document.getElementById("reply-container").style.display = "block"; // Affiche le conteneur de réponse
+}
 
-    function cancelReply() {
-        replyMessageId = null;
-        replyMessageText = "";
-        document.getElementById("reply-message").textContent = "";
-        document.getElementById("reply-container").style.display = "none";
-    }
+   function cancelReply() {
+    replyMessageId = null; // Réinitialise l'ID de réponse
+    replyMessageText = ""; // Réinitialise le texte de la citation
+    document.getElementById("reply-message").textContent = ""; // Efface la citation affichée
+    document.getElementById("reply-container").style.display = "none"; // Cache le conteneur de réponse
+}
 
     function toggleAllMessages() {
         var allMessages = document.querySelectorAll(".msg-text");
