@@ -845,7 +845,7 @@ function deleteMessage(msgDiv, key) {
         picker.style.display = picker.style.display === "flex" ? "none" : "flex";
     }
 
-    unction prepareReply(key, message) {
+    function prepareReply(key, message) {
     replyMessageId = key; // Enregistre l'ID du message auquel on répond
     replyMessageText = message; // Enregistre le texte du message pour la citation
     document.getElementById("reply-message").textContent = "Réponse à : " + message; // Affiche la citation
