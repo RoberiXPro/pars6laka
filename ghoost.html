@@ -594,24 +594,24 @@ function removeUserFromUI(user) {
 var childRemovedListenerSet = false;
 
 function loadMessages() {
-    // Vérifie si le listener de messages n'est pas encore défini
+    // Écoute les nouveaux messages ajoutés pour les afficher
     if (!messageListener) {
-        // Définit `messageListener` pour écouter les nouveaux messages
         messageListener = function(snapshot) {
             displayMessage(snapshot.key, snapshot.val());
         };
-        db.child("messages").on("child_added", messageListener);
+        db.child("rooms/" + roomName + "/messages").on("child_added", messageListener);
     }
 
-    // Listener pour la suppression des messages (utilise un drapeau pour éviter les doublons)
+    // Écoute la suppression de messages pour tous les utilisateurs dans la salle
     if (!childRemovedListenerSet) {
-        db.child("messages").on("child_removed", function(snapshot) {
+        db.child("rooms/" + roomName + "/messages").on("child_removed", function(snapshot) {
             const removedMessage = document.getElementById(snapshot.key);
             if (removedMessage) {
-                removedMessage.remove();
+                removedMessage.remove(); // Supprime le message de l'interface utilisateur pour tous les utilisateurs
+                console.log("Message supprimé de l'interface après suppression dans Firebase.");
             }
         });
-        childRemovedListenerSet = true; // Définit le drapeau une fois que le listener est ajouté
+        childRemovedListenerSet = true;
     }
 }
 
@@ -788,20 +788,18 @@ function loadMessages() {
         deleteBtn.textContent = "Supprimer";
         deleteBtn.className = "btn-delete";
         deleteBtn.onclick = function() {
-                console.log("Suppression du message avec ID :", key);
-db.child("rooms/" + roomName + "/messages/" + key).remove()
+    console.log("Suppression du message avec ID :", key);
+    
+    // Supprime le message dans Firebase, ce qui déclenchera `child_removed` pour tous les utilisateurs
+    db.child("rooms/" + roomName + "/messages/" + key).remove()
         .then(() => {
             console.log("Message supprimé avec succès de Firebase.");
-            const messageElement = document.getElementById(key);
-            if (messageElement) {
-                messageElement.remove(); // Supprime le message de l'interface utilisateur
-                console.log("Message supprimé de l'interface utilisateur.");
-            }
         })
         .catch(error => {
             console.error("Erreur lors de la suppression du message :", error);
         });
 };
+
 
         actionButtons.appendChild(replyBtn);
         actionButtons.appendChild(deleteBtn);
