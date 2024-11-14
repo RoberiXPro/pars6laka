@@ -441,8 +441,21 @@
     var allMessagesVisible = false;
     var messageListener = null;
 
+// Fonction pour afficher la notification
+        function showNotification() {
+            const notification = document.getElementById("notification");
+            notification.style.display = "block";
 
-function joinRoom() {
+            // Cacher la notification après quelques secondes
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 10000); // La notification reste affichée 10 secondes
+        }
+
+        // Affiche la notification au chargement de la page
+        document.addEventListener("DOMContentLoaded", showNotification);
+
+    function joinRoom() {
     username = document.getElementById("username").value;
     roomName = document.getElementById("room-name-input").value;
     var password = document.getElementById("password-input").value;
