@@ -725,7 +725,8 @@ function quitRoom() {
     reactionContainer.className = "reaction-container";
     msgDiv.appendChild(reactionContainer);
 
-    db.child("messages/" + key + "/reactions").on("value", function(snapshot) {
+     // Correction du chemin Firebase pour les réactions
+    db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function(snapshot) {
         reactionContainer.innerHTML = ""; // Reset the content
         if (snapshot.exists()) {
             var reactionLabel = document.createElement("span");
@@ -845,14 +846,12 @@ function deleteMessage(msgDiv, key) {
     
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
-    // Close all other emoji pickers
     document.querySelectorAll(".emoji-picker-message").forEach(picker => {
         if (picker.id !== `emoji-picker-${key}`) {
             picker.style.display = "none";
         }
     });
 
-    // Toggle the display of the targeted emoji picker
     const picker = document.getElementById(`emoji-picker-${key}`);
     if (picker) {
         picker.style.display = picker.style.display === "flex" ? "none" : "flex";
