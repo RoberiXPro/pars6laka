@@ -364,8 +364,6 @@
     }
 </style>
 
-
-
 </head>
 <body>
     <h1>Ghoost</h1>
@@ -790,9 +788,14 @@ function loadMessages() {
         deleteBtn.className = "btn-delete";
         deleteBtn.onclick = function() {
                 console.log("Suppression du message avec ID :", key);
-             db.child("rooms/" + roomName + "/messages/" + key).remove()
-            .then(() => {
-            console.log("Message supprimé avec succès.");
+db.child("rooms/" + roomName + "/messages/" + key).remove()
+        .then(() => {
+            console.log("Message supprimé avec succès de Firebase.");
+            const messageElement = document.getElementById(key);
+            if (messageElement) {
+                messageElement.remove(); // Supprime le message de l'interface utilisateur
+                console.log("Message supprimé de l'interface utilisateur.");
+            }
         })
         .catch(error => {
             console.error("Erreur lors de la suppression du message :", error);
