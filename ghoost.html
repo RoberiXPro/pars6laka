@@ -856,8 +856,16 @@ function deleteMessage(msgDiv, key) {
     }, 1000); // Délai pour l'animation, si nécessaire
 }
     
-    // Fonction toggleEmojiPickerMessage pour cibler le bon emoji picker par message
+// Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
+    // Ferme tous les autres emoji pickers avant d'ouvrir celui qui correspond au message actuel
+    document.querySelectorAll(".emoji-picker-message").forEach(picker => {
+        if (picker.id !== `emoji-picker-${key}`) {
+            picker.style.display = "none";
+        }
+    });
+
+    // Affiche ou masque l'emoji picker du message ciblé
     const picker = document.getElementById(`emoji-picker-${key}`);
     if (picker) {
         picker.style.display = picker.style.display === "flex" ? "none" : "flex";
