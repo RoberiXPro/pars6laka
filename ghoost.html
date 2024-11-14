@@ -789,7 +789,14 @@ function loadMessages() {
         deleteBtn.textContent = "Supprimer";
         deleteBtn.className = "btn-delete";
         deleteBtn.onclick = function() {
-             db.child("rooms/" + roomName + "/messages/" + key).remove(); // Supprime le message dans la salle actuelle
+                console.log("Suppression du message avec ID :", key);
+             db.child("rooms/" + roomName + "/messages/" + key).remove()
+            .then(() => {
+            console.log("Message supprimé avec succès.");
+        })
+        .catch(error => {
+            console.error("Erreur lors de la suppression du message :", error);
+        });
 };
 
         actionButtons.appendChild(replyBtn);
