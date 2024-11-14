@@ -255,6 +255,18 @@
         border-radius: 6px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
+    .notification {
+            display: none; /* Caché par défaut */
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #ff9800;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
     .username.user2 {
         display: inline-block;
         font-size: 0.9rem;
@@ -367,11 +379,13 @@
 </head>
 <body>
     <h1>Ghoost</h1>
-
+<div id="notification" class="notification">
+        ⚠️ ZAFADY O! Pour une meilleure confidentialité, utilisez la navigation privée afin de ne laisser aucune trace.
+    </div>
     <!-- Section de connexion -->
     <div id="login-container">
-        <input type="text" id="username" placeholder="Votre pseudo" required><br>
-        <input type="text" id="room-name-input" placeholder="Rendez-vous chez" required><br>
+        <input type="text" id="username" placeholder="Ton pseudo" required><br>
+        <input type="text" id="room-name-input" placeholder="Votre lieu de Rendez-vous" required><br>
         <input type="password" id="password-input" placeholder="Mot de passe" required><br>
         <button onclick="joinRoom()">Rejoindre</button>
     </div>
