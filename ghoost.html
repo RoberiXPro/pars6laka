@@ -563,33 +563,35 @@ function removeUserFromUI(user) {
         loadMessages();
     }
 
-    function sendMessage() {
-        var messageInput = document.getElementById("message-input");
-        var message = messageInput.value;
+function sendMessage() {
+    var messageInput = document.getElementById("message-input");
+    var message = messageInput.value;
 
-        if (message.trim() === "") {
-            return;
-        }
-
-        var timestamp = new Date().toLocaleTimeString();
-
-        var msgData = { 
-            "user": username, 
-            "message": message, 
-            "timestamp": timestamp,
-            "reactions": {}
-        };
-        
-        if (replyMessageId) {
-            msgData.replyTo = replyMessageText;
-            cancelReply();
-        }
-
-        var msgRef = db.child("messages").push();
-        msgRef.set(msgData);
-
-        messageInput.value = '';
+    if (message.trim() === "") {
+        return;
     }
+
+    var timestamp = new Date().toLocaleTimeString();
+
+    var msgData = { 
+        "user": username, 
+        "message": message, 
+        "timestamp": timestamp,
+        "reactions": {}
+    };
+    
+    if (replyMessageId) {
+        msgData.replyTo = replyMessageText;
+        cancelReply();
+    }
+
+    // Correction : Cibler le bon chemin dans Firebase pour le roomName
+    var msgRef = db.child("rooms/" + roomName + "/messages").push();
+    msgRef.set(msgData);
+
+    messageInput.value = '';
+}
+
 
 var childRemovedListenerSet = false;
 
@@ -617,8 +619,8 @@ function loadMessages() {
 
     //fonction pour les réactions dans les messages 
     function addReactionEmoji(messageId, emoji) {
-        db.child("messages/" + messageId + "/reactions/" + username).set(emoji);
-    }
+    db.child("rooms/" + roomName + "/messages/" + messageId + "/reactions/" + username).set(emoji);
+}
 
     // Liste d'émojis de base
     const emojis = ["😀", "😂", "😍", "😎", "😊", "😢", "😡", "👍", "👎", "🎉", "❤️", "🔥"];
@@ -845,7 +847,7 @@ function deleteMessage(msgDiv, key) {
     msgDiv.classList.add("fondu"); // Optionnel : ajout d'un effet visuel de fondu
     setTimeout(function() {
         msgDiv.remove();
-        db.child("messages/" + key).remove(); // Suppression dans Firebase
+       db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression dans Firebase
     }, 1000); // Délai pour l'animation, si nécessaire
 }
     
