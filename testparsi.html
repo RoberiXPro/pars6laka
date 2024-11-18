@@ -100,6 +100,13 @@
         font-size: 1em;
         margin-left: 10px;
     }
+.progress-bar {
+    width: 0;
+    height: 5px;
+    background-color: #e74c3c;
+    border-radius: 5px;
+    transition: width 10s linear; /* Animation sur 10 secondes */
+}
 
     .status-indicator {
         width: 10px;
@@ -750,6 +757,24 @@ function quitRoom() {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
+        // Création de la barre de progression
+    var progressBar = document.createElement("div");
+    progressBar.className = "progress-bar";
+    progressBar.style.height = "5px";
+    progressBar.style.backgroundColor = "#e74c3c";
+    progressBar.style.borderRadius = "5px";
+    progressBar.style.transition = "width 10s linear"; // Transition de 10 secondes pour la barre
+    progressBar.style.width = "0"; // Initialiser à 0%
+
+    // Ajout de la barre de progression au message
+    msgDiv.appendChild(progressBar);
+
+    // Ajout de la fonction de suppression après 10 secondes
+    startDeletionTimer(msgDiv, key, progressBar);
+
+    // Réactions et autres fonctionnalités...
+}
+
     // Reaction container
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
@@ -773,11 +798,16 @@ function quitRoom() {
     });
 
        // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
-    function startDeletionTimer(msgDiv, key) {
-        setTimeout(function() {
-            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
-        }, 10000); // 10 secondes
-    }
+   function startDeletionTimer(msgDiv, key, progressBar) {
+    // Initialiser le compte à rebours de la suppression avec une barre de progression
+    let progress = 0;
+    progressBar.style.width = "100%"; // La barre prend 10 secondes pour se remplir complètement
+
+    // Supprimer le message après 10 secondes
+    setTimeout(function() {
+        deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
+    }, 10000); // 10 secondes
+}
 
     // Fonction de suppression du message
     function deleteMessage(msgDiv, key) {
