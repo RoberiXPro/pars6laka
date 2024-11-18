@@ -770,6 +770,32 @@ function quitRoom() {
         }
     });
 
+       // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
+    function startDeletionTimer(msgDiv, key) {
+        setTimeout(function() {
+            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
+        }, 10000); // 10 secondes
+    }
+
+    // Fonction de suppression du message
+    function deleteMessage(msgDiv, key) {
+        msgDiv.classList.add("fondu"); // Effet de fondu pour la suppression
+        setTimeout(function() {
+            msgDiv.remove(); // Suppression de l'élément du DOM
+            db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression du message dans Firebase
+        }, 1000); // Délai pour l'animation visuelle de suppression (1 seconde)
+    }
+
+    // L'événement pour démarrer la suppression après survol
+    msgDiv.onmouseover = function() {
+        textSpan.classList.remove("flou"); // Annule l'effet flou
+        startDeletionTimer(msgDiv, key); // Démarre le compte à rebours pour supprimer le message après 10 secondes
+    };
+ // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
+    msgDiv.onmouseleave = function() {
+        textSpan.classList.add("flou");
+    };
+
     if (data.replyTo) {
         var replyDiv = document.createElement("div");
         replyDiv.className = "citation flou";
@@ -847,30 +873,7 @@ function quitRoom() {
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
 }
-//eto manomboka le resaka suppression automatik
-    msgDiv.onmouseover = function() {
-            textSpan.classList.remove("flou");
-            startDeletionTimer(msgDiv, key);  // Démarrer le compte à rebours dès le survol
-        };
-        msgDiv.onmouseleave = function() {
-            textSpan.classList.add("flou");
-        };
 
-        // Fonction de suppression de message après 10 secondes
-        function startDeletionTimer(msgDiv, key) {
-            setTimeout(function() {
-                deleteMessage(msgDiv, key);
-            }, 10000); // Supprime après 10 secondes
-        }
-
-        // Fonction de suppression de message
-        function deleteMessage(msgDiv, key) {
-            msgDiv.classList.add("fondu");
-            setTimeout(function() {
-                msgDiv.remove();
-                db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression dans Firebase
-            }, 1000);
-        }
    
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
