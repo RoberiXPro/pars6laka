@@ -384,13 +384,6 @@
 <div id="notification" class="notification">
         ⚠️ZAFADY O! Pour une meilleure confidentialité,<br> utilisez la navigation privée afin de ne laisser aucune trace.⚠️
     </div>
-    <div id="login-container">
-    <input type="email" id="email" placeholder="Ton email" required><br>
-    <input type="password" id="password" placeholder="Mot de passe" required><br>
-    <button onclick="loginUser()">Se connecter</button>
-    <button onclick="registerUser()">Créer un compte</button>
-</div>
-
     <!-- Section de connexion -->
     <div id="login-container">
         <input type="text" id="username" placeholder="Ton pseudo" required><br>
@@ -464,41 +457,6 @@
         // Affiche la notification au chargement de la page
         document.addEventListener("DOMContentLoaded", showNotification);
 
-// Fonction pour se connecter avec email et mot de passe
-function loginUser() {
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-        var user = userCredential.user;
-        alert("Connexion réussie !");
-        // Passe à la salle de chat après la connexion
-        switchToChat();
-    })
-    .catch((error) => {
-        alert("Erreur de connexion : " + error.message);
-    });
-}
-
-// Fonction pour s'inscrire avec email et mot de passe
-function registerUser() {
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-        var user = userCredential.user;
-        alert("Inscription réussie !");
-        // Passe à la salle de chat après l'inscription
-        switchToChat();
-    })
-    .catch((error) => {
-        alert("Erreur d'inscription : " + error.message);
-    });
-}
-
-    
     function joinRoom() {
     username = document.getElementById("username").value;
     roomName = document.getElementById("room-name-input").value;
@@ -577,13 +535,8 @@ function initializeUserListeners() {
 
 // Fonction pour gérer le statut en ligne et hors ligne de l'utilisateur
 function setOnlineStatus() {
-    if (!firebase.auth().currentUser) {
-        // Si l'utilisateur n'est pas authentifié, on ne met pas à jour son statut
-        return;
-    }
+    if (!username || !roomName) return;
 
-    var username = firebase.auth().currentUser.email;  // Utiliser l'email comme identifiant
-    var roomName = document.getElementById("room-name-input").value;
     var userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
 
     firebase.database().ref(".info/connected").on("value", function(snapshot) {
@@ -592,11 +545,13 @@ function setOnlineStatus() {
                 status: "en ligne",
                 lastSeen: new Date().toISOString()
             });
-            userRef.onDisconnect().remove();  // Supprimer l'utilisateur lorsque déconnecté
+            userRef.onDisconnect().remove();
+            setInterval(() => {
+                userRef.update({ lastSeen: new Date().toISOString() });
+            }, 5000);
         }
     });
 }
-
 
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
 function updateUserStatusUI(user, status) {
@@ -973,7 +928,7 @@ function toggleEmojiPickerMessage(key) {
 </script>
 
     <footer style="margin-top: 20px; font-size: 0.8rem; color: #999; text-align: center;">
-        &copy;BIG-Little-Bob. Mada-2024
+        &copy;BIG-Little-B 2024
     </footer>
 </body>
 </html>
