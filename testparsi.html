@@ -256,19 +256,20 @@
         border-radius: 6px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .notification {
-            display: none; /* Caché par défaut */
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            text-align: center;
-            background-color: #911403;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-        }
+   .notification {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    top: 50%; /* Centrer verticalement */
+    left: 50%; /* Centrer horizontalement */
+    transform: translate(-50%, -50%); /* Ajuste la position pour bien centrer */
+    text-align: center;
+    background-color: #911403;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
     .username.user2 {
         display: inline-block;
         font-size: 0.9rem;
