@@ -839,13 +839,6 @@ function quitRoom() {
         textSpan.classList.add("flou");
     }, 15000);
 
-    msgDiv.onmouseover = function() {
-        textSpan.classList.remove("flou");
-    };
-    msgDiv.onmouseleave = function() {
-        textSpan.classList.add("flou");
-    };
-
     scrollToBottom();
 
     // Notifications pour nouveaux messages
@@ -854,24 +847,31 @@ function quitRoom() {
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
 }
+//eto manomboka le resaka suppression automatik
+    msgDiv.onmouseover = function() {
+            textSpan.classList.remove("flou");
+            startDeletionTimer(msgDiv, key);  // Démarrer le compte à rebours dès le survol
+        };
+        msgDiv.onmouseleave = function() {
+            textSpan.classList.add("flou");
+        };
 
+        // Fonction de suppression de message après 10 secondes
+        function startDeletionTimer(msgDiv, key) {
+            setTimeout(function() {
+                deleteMessage(msgDiv, key);
+            }, 10000); // Supprime après 10 secondes
+        }
 
-// Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
-function startDeletionTimer(msgDiv, key) {
-    setTimeout(function() {
-        deleteMessage(msgDiv, key);
-    }, 60000); // Supprime le message après 1 minute
-}
-
-// Fonction de suppression de message
-function deleteMessage(msgDiv, key) {
-    msgDiv.classList.add("fondu"); // Optionnel : ajout d'un effet visuel de fondu
-    setTimeout(function() {
-        msgDiv.remove();
-       db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression dans Firebase
-    }, 1000); // Délai pour l'animation, si nécessaire
-}
-    
+        // Fonction de suppression de message
+        function deleteMessage(msgDiv, key) {
+            msgDiv.classList.add("fondu");
+            setTimeout(function() {
+                msgDiv.remove();
+                db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression dans Firebase
+            }, 1000);
+        }
+   
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
     document.querySelectorAll(".emoji-picker-message").forEach(picker => {
