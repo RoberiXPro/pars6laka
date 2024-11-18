@@ -2,7 +2,7 @@
 <html>
     <!-- Version mandeh status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
-    <title>Ghoost-TEST - Room sécurisé</title>
+    <title>Ghoost - Room sécurisé</title>
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
@@ -100,24 +100,6 @@
         font-size: 1em;
         margin-left: 10px;
     }
-.progress-bar-container {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background-color: #333;
-    border-radius: 5px;
-    z-index: 100;
-}
-
-.progress-bar {
-    width: 0;
-    height: 100%;
-    background-color: #e74c3c;
-    border-radius: 5px;
-    transition: width 10s linear;
-}
 
     .status-indicator {
         width: 10px;
@@ -399,10 +381,11 @@
 
 </head>
 <body>
-    <h1>TEST-Ghoost</h1>
-<div id="notification" class="notification">
+
+    <div id="notification" class="notification">
         ⚠️ZAFADY O! Pour une meilleure confidentialité,<br> utilisez la navigation privée afin de ne laisser aucune trace.⚠️
     </div>
+    <h1>🗨️GHOOST👻</h1>
     <!-- Section de connexion -->
     <div id="login-container">
         <input type="text" id="username" placeholder="Ton pseudo" required><br>
@@ -470,7 +453,7 @@
             // Cacher la notification après quelques secondes
             setTimeout(() => {
                 notification.style.display = "none";
-            }, 10000); // La notification reste affichée 10 secondes
+            }, 5000); // La notification reste affichée 10 secondes
         }
 
         // Affiche la notification au chargement de la page
@@ -742,21 +725,7 @@ function quitRoom() {
     location.reload();
 }
 
-// Fonction utilitaire pour gérer la suppression avec la barre de progression
-function startDeletionTimer(msgDiv, key, progressBar) {
-    // Initialiser le compte à rebours de la suppression avec une barre de progression
-    setTimeout(function() {
-        progressBar.style.transition = "width 10s linear"; // Appliquer la transition de 10s pour remplir la barre
-        progressBar.style.width = "100%"; // La barre prend 10 secondes pour se remplir complètement
-
-        // Supprimer le message après 10 secondes
-        setTimeout(function() {
-            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
-        }, 10000); // 10 secondes
-    }, 0); // Démarrer immédiatement pour que la transition commence
-}
-    
- function displayMessage(key, data) {
+   function displayMessage(key, data) {
     var msgDiv = document.createElement("div");
     msgDiv.id = key;
     msgDiv.className = (data.user === username ? "message user1" : "message user2");
@@ -782,21 +751,12 @@ function startDeletionTimer(msgDiv, key, progressBar) {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
-    // Création de la barre de progression
-    var progressBarContainer = document.createElement("div");
-    progressBarContainer.className = "progress-bar-container"; // Le conteneur de la barre de progression
-
-    var progressBar = document.createElement("div");
-    progressBar.className = "progress-bar"; // La barre elle-même
-    progressBar.style.width = "0"; // Initialiser à 0% pour l'animation
-    progressBarContainer.appendChild(progressBar);
-    msgDiv.appendChild(progressBarContainer); // Ajouter au message
-
-    // Réactions et autres fonctionnalités...
+    // Reaction container
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
     msgDiv.appendChild(reactionContainer);
 
+     // Correction du chemin Firebase pour les réactions
     db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function(snapshot) {
         reactionContainer.innerHTML = ""; // Reset the content
         if (snapshot.exists()) {
@@ -813,6 +773,13 @@ function startDeletionTimer(msgDiv, key, progressBar) {
         }
     });
 
+       // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
+    function startDeletionTimer(msgDiv, key) {
+        setTimeout(function() {
+            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
+        }, 10000); // 10 secondes
+    }
+
     // Fonction de suppression du message
     function deleteMessage(msgDiv, key) {
         msgDiv.classList.add("fondu"); // Effet de fondu pour la suppression
@@ -825,17 +792,13 @@ function startDeletionTimer(msgDiv, key, progressBar) {
     // L'événement pour démarrer la suppression après survol
     msgDiv.onmouseover = function() {
         textSpan.classList.remove("flou"); // Annule l'effet flou
-        progressBar.style.transition = "width 10s linear"; // Lancer la barre de progression
-        progressBar.style.width = "100%"; // La barre prend 10 secondes pour se remplir complètement
-        startDeletionTimer(msgDiv, key, progressBar); // Démarre le compte à rebours pour supprimer le message après 10 secondes
+        startDeletionTimer(msgDiv, key); // Démarre le compte à rebours pour supprimer le message après 10 secondes
     };
-
-    // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
+ // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
     msgDiv.onmouseleave = function() {
         textSpan.classList.add("flou");
     };
 
-    // Gérer les réponses et autres actions (facultatif)
     if (data.replyTo) {
         var replyDiv = document.createElement("div");
         replyDiv.className = "citation flou";
@@ -877,7 +840,6 @@ function startDeletionTimer(msgDiv, key, progressBar) {
     });
     msgDiv.appendChild(emojiPickerMessage); // Append picker to message div
 
-    // Add action buttons (Reply, Delete)
     var actionButtons = document.createElement("div");
     actionButtons.className = "action-buttons";
 
@@ -914,6 +876,7 @@ function startDeletionTimer(msgDiv, key, progressBar) {
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
 }
+
    
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
