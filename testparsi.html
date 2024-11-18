@@ -751,6 +751,43 @@ function quitRoom() {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
+       // Ajouter une barre de progression ou un compte à rebours
+var progressBarContainer = document.createElement("div");
+progressBarContainer.className = "progress-bar-container";
+var progressBar = document.createElement("progress");
+progressBar.className = "progress-bar";
+progressBar.max = 10; // 10 secondes
+progressBar.value = 0;
+progressBarContainer.appendChild(progressBar);
+msgDiv.appendChild(progressBarContainer);
+
+// Fonction de compte à rebours (10 secondes avant suppression)
+var countdown = 10;
+var interval; // Variable pour l'intervalle
+
+       // L'événement de quitter le message (optionnel)
+msgDiv.onmouseleave = function() {
+    textSpan.classList.add("flou"); // Réapplique l'effet flou
+    clearInterval(interval); // Arrête le compte à rebours si on quitte le message
+};
+
+// L'événement de survol démarre le compte à rebours
+msgDiv.onmouseover = function() {
+    textSpan.classList.remove("flou"); // Annule l'effet flou
+    progressBar.value = 0; // Reset la barre de progression
+    countdown = 10; // Réinitialiser le compte à rebours à 10 secondes
+
+    // Démarre le compte à rebours et la barre de progression
+    interval = setInterval(function() {
+        progressBar.value = 10 - countdown;
+        if (countdown === 0) {
+            clearInterval(interval); // Arrêter le compte à rebours
+            deleteMessage(msgDiv, key); // Supprimer le message
+        }
+        countdown--;
+    }, 1000); // Met à jour chaque seconde
+};
+
     // Reaction container
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
@@ -781,13 +818,14 @@ function quitRoom() {
     }
 
     // Fonction de suppression du message
-    function deleteMessage(msgDiv, key) {
-        msgDiv.classList.add("fondu"); // Effet de fondu pour la suppression
-        setTimeout(function() {
-            msgDiv.remove(); // Suppression de l'élément du DOM
-            db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression du message dans Firebase
-        }, 1000); // Délai pour l'animation visuelle de suppression (1 seconde)
-    }
+    // Fonction pour supprimer le message après le compte à rebours
+function deleteMessage(msgDiv, key) {
+    msgDiv.classList.add("fondu"); // Effet de fondu pour la suppression
+    setTimeout(function() {
+        msgDiv.remove(); // Suppression de l'élément du DOM
+        db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression du message dans Firebase
+    }, 1000); // Délai pour l'animation visuelle de suppression (1 seconde)
+}
 
     // L'événement pour démarrer la suppression après survol
     msgDiv.onmouseover = function() {
