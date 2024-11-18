@@ -927,6 +927,17 @@ function toggleEmojiPickerMessage(key) {
     window.addEventListener("beforeunload", function() {
     firebase.database().ref("users/" + username).remove();
 });
+    document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === 'visible') {
+        // Réinitialiser l'icône de notification lorsque l'utilisateur consulte l'onglet
+        const notification = document.getElementById("notification");
+        notification.style.display = "none";  // Masquer la notification
+
+        // Réinitialiser le titre de l'onglet si un nouveau message était arrivé
+        document.title = 'Votre Chat';
+    }
+});
+
 </script>
 
     <footer style="margin-top: 20px; font-size: 0.8rem; color: #999; text-align: center;">
