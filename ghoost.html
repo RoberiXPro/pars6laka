@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+    <!-- Version mandeh status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
     <title>Ghoost - Room sécurisé</title>
     <!-- Inclure Firebase SDK -->
@@ -255,18 +256,20 @@
         border-radius: 6px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .notification {
-            display: none; /* Caché par défaut */
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: #911403;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-        }
+   .notification {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    top: 50%; /* Centrer verticalement */
+    left: 50%; /* Centrer horizontalement */
+    transform: translate(-50%, -50%); /* Ajuste la position pour bien centrer */
+    text-align: center;
+    background-color: #911403;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
     .username.user2 {
         display: inline-block;
         font-size: 0.9rem;
@@ -378,9 +381,9 @@
 
 </head>
 <body>
-    <h1>Ghoost</h1>
+    <h1>🗨️GHOOST🗨️</h1>
 <div id="notification" class="notification">
-        ⚠️ZAFADY O! Pour une meilleure confidentialité, utilisez la navigation privée afin de ne laisser aucune trace.⚠️
+        ⚠️ZAFADY O! Pour une meilleure confidentialité,<br> utilisez la navigation privée afin de ne laisser aucune trace.⚠️
     </div>
     <!-- Section de connexion -->
     <div id="login-container">
@@ -769,6 +772,32 @@ function quitRoom() {
         }
     });
 
+       // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
+    function startDeletionTimer(msgDiv, key) {
+        setTimeout(function() {
+            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
+        }, 10000); // 10 secondes
+    }
+
+    // Fonction de suppression du message
+    function deleteMessage(msgDiv, key) {
+        msgDiv.classList.add("fondu"); // Effet de fondu pour la suppression
+        setTimeout(function() {
+            msgDiv.remove(); // Suppression de l'élément du DOM
+            db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression du message dans Firebase
+        }, 1000); // Délai pour l'animation visuelle de suppression (1 seconde)
+    }
+
+    // L'événement pour démarrer la suppression après survol
+    msgDiv.onmouseover = function() {
+        textSpan.classList.remove("flou"); // Annule l'effet flou
+        startDeletionTimer(msgDiv, key); // Démarre le compte à rebours pour supprimer le message après 10 secondes
+    };
+ // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
+    msgDiv.onmouseleave = function() {
+        textSpan.classList.add("flou");
+    };
+
     if (data.replyTo) {
         var replyDiv = document.createElement("div");
         replyDiv.className = "citation flou";
@@ -838,13 +867,6 @@ function quitRoom() {
         textSpan.classList.add("flou");
     }, 15000);
 
-    msgDiv.onmouseover = function() {
-        textSpan.classList.remove("flou");
-    };
-    msgDiv.onmouseleave = function() {
-        textSpan.classList.add("flou");
-    };
-
     scrollToBottom();
 
     // Notifications pour nouveaux messages
@@ -854,23 +876,7 @@ function quitRoom() {
     }
 }
 
-
-// Fonction pour démarrer un compte à rebours de 20 secondes avant la suppression
-function startDeletionTimer(msgDiv, key) {
-    setTimeout(function() {
-        deleteMessage(msgDiv, key);
-    }, 60000); // Supprime le message après 1 minute
-}
-
-// Fonction de suppression de message
-function deleteMessage(msgDiv, key) {
-    msgDiv.classList.add("fondu"); // Optionnel : ajout d'un effet visuel de fondu
-    setTimeout(function() {
-        msgDiv.remove();
-       db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression dans Firebase
-    }, 1000); // Délai pour l'animation, si nécessaire
-}
-    
+   
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
     document.querySelectorAll(".emoji-picker-message").forEach(picker => {
@@ -923,7 +929,7 @@ function toggleEmojiPickerMessage(key) {
 </script>
 
     <footer style="margin-top: 20px; font-size: 0.8rem; color: #999; text-align: center;">
-        &copy;BIG-Little-Bob. Mada-2024
+        &copy;BIG-Little-B 2024
     </footer>
 </body>
 </html>
