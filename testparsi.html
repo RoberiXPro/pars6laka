@@ -742,7 +742,21 @@ function quitRoom() {
     location.reload();
 }
 
-  function displayMessage(key, data) {
+// Fonction utilitaire pour gérer la suppression avec la barre de progression
+function startDeletionTimer(msgDiv, key, progressBar) {
+    // Initialiser le compte à rebours de la suppression avec une barre de progression
+    setTimeout(function() {
+        progressBar.style.transition = "width 10s linear"; // Appliquer la transition de 10s pour remplir la barre
+        progressBar.style.width = "100%"; // La barre prend 10 secondes pour se remplir complètement
+
+        // Supprimer le message après 10 secondes
+        setTimeout(function() {
+            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
+        }, 10000); // 10 secondes
+    }, 0); // Démarrer immédiatement pour que la transition commence
+}
+    
+ function displayMessage(key, data) {
     var msgDiv = document.createElement("div");
     msgDiv.id = key;
     msgDiv.className = (data.user === username ? "message user1" : "message user2");
@@ -778,9 +792,6 @@ function quitRoom() {
     progressBarContainer.appendChild(progressBar);
     msgDiv.appendChild(progressBarContainer); // Ajouter au message
 
-    // Ajout de la fonction de suppression après 10 secondes
-    startDeletionTimer(msgDiv, key, progressBar);
-
     // Réactions et autres fonctionnalités...
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
@@ -814,6 +825,8 @@ function quitRoom() {
     // L'événement pour démarrer la suppression après survol
     msgDiv.onmouseover = function() {
         textSpan.classList.remove("flou"); // Annule l'effet flou
+        progressBar.style.transition = "width 10s linear"; // Lancer la barre de progression
+        progressBar.style.width = "100%"; // La barre prend 10 secondes pour se remplir complètement
         startDeletionTimer(msgDiv, key, progressBar); // Démarre le compte à rebours pour supprimer le message après 10 secondes
     };
 
@@ -901,20 +914,6 @@ function quitRoom() {
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
 }
-
-function startDeletionTimer(msgDiv, key, progressBar) {
-    // Initialiser le compte à rebours de la suppression avec une barre de progression
-    setTimeout(function() {
-        progressBar.style.transition = "width 10s linear"; // Appliquer la transition de 10s pour remplir la barre
-        progressBar.style.width = "100%"; // La barre prend 10 secondes pour se remplir complètement
-
-        // Supprimer le message après 10 secondes
-        setTimeout(function() {
-            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
-        }, 10000); // 10 secondes
-    }, 0); // Démarrer immédiatement pour que la transition commence
-}
-
    
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
