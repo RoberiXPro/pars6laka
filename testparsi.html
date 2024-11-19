@@ -2,7 +2,7 @@
 <html>
     <!-- Version mandeh status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
-    <title>Ghoos TESTt - Room sécurisé</title>
+    <title>TEST-Ghoost - Room sécurisé</title>
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
@@ -317,20 +317,6 @@
     h1:hover {
         transform: scale(1.05);
     }
-#password-section {
-    display: none; /* Cacher la section mot de passe par défaut */
-}
-
-#chat-container {
-    display: none; /* Afficher le chat par défaut */
-}
-    #password-section {
-    display: none; /* Cache la section du mot de passe au départ */
-}
-
-#messages, #input-section {
-    display: block; /* Afficher les messages et l'input par défaut */
-}
 
     .action-buttons {
         display: flex;
@@ -399,7 +385,7 @@
     <div id="notification" class="notification">
         ⚠️ATTENTION ! Après lecture uniquement, les messages reçus s'auto-détruisent au bout de 30 secondes.⚠️
     </div>
-    <h1>🗨️TEST - GHOOST👻</h1>
+    <h1>TEST GHOOST/h1>
     <!-- Section de connexion -->
     <div id="login-container">
         <input type="text" id="username" placeholder="Ton pseudo" required><br>
@@ -409,7 +395,7 @@
     </div>
 
     <!-- Section de chat -->
-    <div id="chat-container" style="display: none;>
+    <div id="chat-container">
         <div id="room-name-display" style="font-size: 1.5em; font-weight: bold; color: #ffd700; margin-bottom: 10px;"></div>
 
          <div id="user-list">
@@ -951,79 +937,11 @@ function toggleEmojiPickerMessage(key) {
         document.title = 'Votre Chat';
     }
 });
-let inactivityTimer;
-const INACTIVITY_LIMIT = 0 * 60 * 1000; // 5 minutes d'inactivité en millisecondes
-let isLocked = false; // Variable pour savoir si l'interface est verrouillée
-
-// Fonction pour réinitialiser le timer d'inactivité
-function resetInactivityTimer() {
-    clearTimeout(inactivityTimer); // Réinitialise le timer existant
-
-    // Démarre un nouveau timer pour verrouiller l'interface après 5 minutes d'inactivité
-    inactivityTimer = setTimeout(() => {
-        lockInterface(); // Verrouille l'interface après 5 minutes d'inactivité
-    }, INACTIVITY_LIMIT);
-}
-
-// Fonction pour verrouiller l'interface
-function lockInterface() {
-    if (!isLocked) {
-        // Masque les messages et l'input de chat
-        document.getElementById("messages").style.display = "none";
-        document.getElementById("input-section").style.display = "none";
-
-        // Affiche la section de mot de passe pour déverrouiller l'interface
-        document.getElementById("password-section").style.display = "block"; // Affiche le champ du mot de passe
-        
-        isLocked = true; // L'interface est maintenant verrouillée
-        console.log("L'interface est verrouillée après l'inactivité.");
-    }
-}
-
-// Fonction pour déverrouiller l'interface après la saisie du mot de passe
-function unlockInterface() {
-    const passwordInput = document.getElementById("room-password-input").value; // Récupère le mot de passe saisi
-
-    // Vérifie si le mot de passe est correct
-    var dbPassword = firebase.database().ref("rooms/" + roomName).child("password").val();
-    if (passwordInput === dbPassword) {
-        // Réinitialise l'affichage pour montrer de nouveau l'interface de chat
-        document.getElementById("messages").style.display = "block";
-        document.getElementById("input-section").style.display = "block";
-        document.getElementById("password-section").style.display = "none"; // Cache la section du mot de passe
-        
-        isLocked = false; // L'interface est déverrouillée
-        
-        // Réinitialiser le timer d'inactivité pour recommencer à suivre l'activité de l'utilisateur
-        resetInactivityTimer();
-        
-        console.log("L'interface est déverrouillée.");
-    } else {
-        alert("Mot de passe incorrect !");
-    }
-}
-
-// Ajouter un événement pour suivre l'activité de l'utilisateur
-function trackUserActivity() {
-    // Suivre les clics, les mouvements de la souris et les frappes au clavier
-    window.addEventListener("mousemove", resetInactivityTimer);
-    window.addEventListener("keydown", resetInactivityTimer);
-    window.addEventListener("click", resetInactivityTimer);
-}
-
-// Initialiser le suivi d'activité de l'utilisateur
-trackUserActivity();
-
 
 </script>
 
     <footer style="margin-top: 20px; font-size: 0.8rem; color: #999; text-align: center;">
         &copy;BIG-Little-B 2024
     </footer>
-        <!-- Section du mot de passe -->
-<div id="password-section" style="display: none;">
-    <input type="password" id="room-password-input" placeholder="Entrez le mot de passe du room">
-    <button onclick="unlockInterface()">Déverrouiller</button>
-</div>
 </body>
 </html>
