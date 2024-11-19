@@ -3,6 +3,8 @@
     <!-- Version mandeh status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
     <title>Ghoost - Room sécurisé</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
@@ -128,15 +130,31 @@
         background-color: #444;
         color: #fff;
     }
-    button {
-        background-color: #5a5a5a;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    button:hover {
-        background-color: #4c4c4c;
-    }
+   button {
+    background-color: #5a5a5a; /* Couleur de fond du bouton */
+    color: white; /* Couleur du texte (mais nous n'utiliserons plus de texte ici, que des icônes) */
+    cursor: pointer; /* Curseur qui devient une main au survol */
+    transition: background-color 0.3s, color 0.3s; /* Transition fluide pour la couleur de fond et des icônes */
+    border: none; /* Enlève les bordures du bouton */
+    padding: 10px; /* Espacement interne */
+    display: flex; /* Permet de centrer l'icône à l'intérieur du bouton */
+    justify-content: center; /* Centrer l'icône horizontalement */
+    align-items: center; /* Centrer l'icône verticalement */
+}
+
+button i {
+    font-size: 1.5rem; /* Taille de l'icône */
+    color: white; /* Couleur de l'icône par défaut */
+}
+
+button:hover {
+    background-color: #4c4c4c; /* Couleur de fond au survol */
+}
+
+button:hover i {
+    color: #007BFF; /* Changement de couleur de l'icône au survol (par exemple, bleu) */
+}
+
 
     #emoji-picker {
         display: flex;
@@ -385,7 +403,7 @@
     <div id="notification" class="notification">
         ⚠️ATTENTION ! Après lecture uniquement, les messages reçus s'auto-détruisent au bout de 30 secondes.⚠️
     </div>
-    <h1>🗨️TEST BGHT👻</h1>
+    <h1>🗨️GHOOST👻</h1>
     <!-- Section de connexion -->
     <div id="login-container">
         <input type="text" id="username" placeholder="Ton pseudo" required><br>
@@ -411,13 +429,40 @@
         </div>
 
         <div id="messages"></div>
-        <div id="input-section">
-            <button onclick="toggleEmojiPicker()">😊</button>
-            <input type="text" id="message-input" placeholder="Écrivez un message">
-            <button onclick="sendMessage()">Envoyer</button>
-            <button onclick="toggleAllMessages()">Afficher tous</button>
-            <button onclick="quitRoom()">Quitter</button>
-        </div>
+       <div id="input-section">
+    <!-- Icône pour l'emoji -->
+    <button onclick="toggleEmojiPicker()">
+        <i class="fas fa-smile"></i> <!-- Icône Emoji -->
+    </button>
+    <input type="text" id="message-input" placeholder="Écrivez un message">
+    
+    <!-- Icône pour envoyer un message -->
+    <button onclick="sendMessage()">
+        <i class="fas fa-paper-plane"></i> <!-- Icône d'envoi de message -->
+    </button>
+    
+    <!-- Icône pour afficher tous les messages -->
+    <button onclick="toggleAllMessages()">
+        <i class="fas fa-eye"></i> <!-- Icône Afficher tous -->
+    </button>
+    
+    <!-- Icône pour quitter la salle -->
+    <button onclick="quitRoom()">
+        <i class="fas fa-sign-out-alt"></i> <!-- Icône Quitter -->
+    </button>
+</div>
+<div class="action-buttons">
+    <!-- Bouton Répondre avec une icône -->
+    <button class="reply-btn" onclick="prepareReply(key, data.message)">
+        <i class="fas fa-reply"></i> <!-- Icône Répondre -->
+    </button>
+
+    <!-- Bouton Supprimer avec une icône -->
+    <button class="btn-delete" onclick="deleteMessage(key)">
+        <i class="fas fa-trash-alt"></i> <!-- Icône Supprimer -->
+    </button>
+</div>
+
         <div id="emoji-picker" style="display: none;">
     <!-- Emoji Picker Content -->
 </div>
@@ -513,101 +558,73 @@ firebase.database().ref("users").on("child_changed", function(snapshot) {
 });
 
 function initializeUserListeners() {
-    const usersRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers");
+    var usersRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers");
 
-    // Événement : utilisateur ajouté
     usersRef.on("child_added", function(snapshot) {
         const user = snapshot.key;
-        const status = snapshot.val()?.status || "hors ligne"; // Définit "hors ligne" si le statut est absent
+        const status = snapshot.val().status;
         updateUserStatusUI(user, status);
     });
 
-    // Événement : changement de statut
+    // Écoute les changements de statut d'utilisateur
     usersRef.on("child_changed", function(snapshot) {
         const user = snapshot.key;
-        const status = snapshot.val()?.status || "hors ligne"; // Définit "hors ligne" si le statut est absent
+        const status = snapshot.val().status;
         updateUserStatusUI(user, status);
     });
 
-    // Événement : utilisateur supprimé
-    usersRef.on("child_removed", function(snapshot) {
+    // Écoute les suppressions d'utilisateurs
+  usersRef.on("child_removed", function(snapshot) {
         const user = snapshot.key;
         removeUserFromUI(user);
     });
 }
 
-
 // Fonction pour gérer le statut en ligne et hors ligne de l'utilisateur
 function setOnlineStatus() {
     if (!username || !roomName) return;
 
-    const userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
+    var userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
 
-    // Suivi de l'état de connexion
     firebase.database().ref(".info/connected").on("value", function(snapshot) {
         if (snapshot.val() === true) {
-            // Utilisateur connecté
             userRef.set({
                 status: "en ligne",
                 lastSeen: new Date().toISOString()
             });
-
-            // Supprime l'utilisateur lorsqu'il se déconnecte
-            userRef.onDisconnect().update({
-                status: "hors ligne",
-                lastSeen: new Date().toISOString()
-            });
-
-            // Met à jour la dernière activité toutes les 5 secondes
+            userRef.onDisconnect().remove();
             setInterval(() => {
                 userRef.update({ lastSeen: new Date().toISOString() });
             }, 5000);
-        } else {
-            // Déconnexion détectée
-            userRef.update({
-                status: "hors ligne",
-                lastSeen: new Date().toISOString()
-            });
         }
     });
 }
 
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
 function updateUserStatusUI(user, status) {
-    // Définit un statut par défaut si `status` est indéfini ou vide
-    if (!status) status = "hors ligne";
-
-    // Vérifie si l'utilisateur existe déjà dans l'interface
     let userElement = document.getElementById("user-status-" + user);
 
     if (!userElement) {
-        // Crée un nouvel élément pour afficher l'utilisateur
         userElement = document.createElement("li");
         userElement.id = "user-status-" + user;
+        userElement.classList.add(status === "en ligne" ? "status-online" : "status-offline");
 
-        // Indicateur visuel de statut (online/offline)
         const statusIndicator = document.createElement("span");
         statusIndicator.classList.add("status-indicator");
         userElement.appendChild(statusIndicator);
 
-        // Texte du nom d'utilisateur et statut
         const userNameText = document.createElement("span");
         userNameText.classList.add("user-status");
         userNameText.textContent = user + " - " + status;
         userElement.appendChild(userNameText);
 
-        // Ajoute l'utilisateur à la liste des utilisateurs connectés
         document.getElementById("online-users").appendChild(userElement);
     } else {
-        // Met à jour les classes CSS selon le statut
         userElement.classList.toggle("status-online", status === "en ligne");
         userElement.classList.toggle("status-offline", status !== "en ligne");
-
-        // Met à jour le texte du statut
         userElement.querySelector(".user-status").textContent = user + " - " + status;
     }
 }
-
     
 function removeUserFromUI(user) {
     const userElement = document.getElementById("user-status-" + user);
@@ -969,7 +986,7 @@ function toggleEmojiPickerMessage(key) {
 </script>
 
     <footer style="margin-top: 20px; font-size: 0.8rem; color: #999; text-align: center;">
-        &copyTEST-B 2024
+        &copy;BIG-Little-B 2024
     </footer>
 </body>
 </html>
