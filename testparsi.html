@@ -645,47 +645,74 @@ function initializeUserListeners() {
 function setOnlineStatus() {
     if (!username || !roomName) return;
 
-    var userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
+    const userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
 
+    // Suivi de l'état de connexion
     firebase.database().ref(".info/connected").on("value", function(snapshot) {
         if (snapshot.val() === true) {
+            // Utilisateur connecté
             userRef.set({
                 status: "en ligne",
                 lastSeen: new Date().toISOString()
             });
-            userRef.onDisconnect().remove();
+
+            // Supprime l'utilisateur lorsqu'il se déconnecte
+            userRef.onDisconnect().update({
+                status: "hors ligne",
+                lastSeen: new Date().toISOString()
+            });
+
+            // Met à jour la dernière activité toutes les 5 secondes
             setInterval(() => {
                 userRef.update({ lastSeen: new Date().toISOString() });
             }, 5000);
+        } else {
+            // Déconnexion détectée
+            userRef.update({
+                status: "hors ligne",
+                lastSeen: new Date().toISOString()
+            });
         }
     });
 }
 
+
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
 function updateUserStatusUI(user, status) {
+    // Définit un statut par défaut si `status` est indéfini ou vide
+    if (!status) status = "hors ligne";
+
+    // Vérifie si l'utilisateur existe déjà dans l'interface
     let userElement = document.getElementById("user-status-" + user);
 
     if (!userElement) {
+        // Crée un nouvel élément pour afficher l'utilisateur
         userElement = document.createElement("li");
         userElement.id = "user-status-" + user;
-        userElement.classList.add(status === "en ligne" ? "status-online" : "status-offline");
 
+        // Indicateur visuel de statut (online/offline)
         const statusIndicator = document.createElement("span");
         statusIndicator.classList.add("status-indicator");
         userElement.appendChild(statusIndicator);
 
+        // Texte du nom d'utilisateur et statut
         const userNameText = document.createElement("span");
         userNameText.classList.add("user-status");
         userNameText.textContent = user + " - " + status;
         userElement.appendChild(userNameText);
 
+        // Ajoute l'utilisateur à la liste des utilisateurs connectés
         document.getElementById("online-users").appendChild(userElement);
     } else {
+        // Met à jour les classes CSS selon le statut
         userElement.classList.toggle("status-online", status === "en ligne");
         userElement.classList.toggle("status-offline", status !== "en ligne");
+
+        // Met à jour le texte du statut
         userElement.querySelector(".user-status").textContent = user + " - " + status;
     }
 }
+
     
 function removeUserFromUI(user) {
     const userElement = document.getElementById("user-status-" + user);
