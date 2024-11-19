@@ -322,7 +322,10 @@
 }
 
 #chat-container {
-    display: block; /* Afficher le chat par défaut */
+    display: none; /* Afficher le chat par défaut */
+}
+    #password-section {
+    display: none; /* Cache la section du mot de passe au départ */
 }
 
 #messages, #input-section {
@@ -949,7 +952,7 @@ function toggleEmojiPickerMessage(key) {
     }
 });
 let inactivityTimer;
-const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 minutes d'inactivité en millisecondes
+const INACTIVITY_LIMIT = 0 * 60 * 1000; // 5 minutes d'inactivité en millisecondes
 let isLocked = false; // Variable pour savoir si l'interface est verrouillée
 
 // Fonction pour réinitialiser le timer d'inactivité
@@ -1010,6 +1013,7 @@ function trackUserActivity() {
 
 // Initialiser le suivi d'activité de l'utilisateur
 trackUserActivity();
+
 
 </script>
 
