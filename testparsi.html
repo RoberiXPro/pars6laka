@@ -789,11 +789,14 @@ function quitRoom() {
         }, 1000); // Délai pour l'animation visuelle de suppression (1 seconde)
     }
 
-    // L'événement pour démarrer la suppression après survol
-    msgDiv.onmouseover = function() {
+   // L'événement pour démarrer la suppression après survol
+msgDiv.onmouseover = function() {
+    if (data.user !== username) { // Condition pour ne supprimer que les messages reçus
         textSpan.classList.remove("flou"); // Annule l'effet flou
         startDeletionTimer(msgDiv, key); // Démarre le compte à rebours pour supprimer le message après 10 secondes
-    };
+    }
+};
+
  // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
     msgDiv.onmouseleave = function() {
         textSpan.classList.add("flou");
