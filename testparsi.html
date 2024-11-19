@@ -3,8 +3,6 @@
     <!-- Version mandeh status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
     <title>Ghoost - Room sécurisé</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
@@ -130,31 +128,15 @@
         background-color: #444;
         color: #fff;
     }
-   button {
-    background-color: #5a5a5a; /* Couleur de fond du bouton */
-    color: white; /* Couleur du texte (mais nous n'utiliserons plus de texte ici, que des icônes) */
-    cursor: pointer; /* Curseur qui devient une main au survol */
-    transition: background-color 0.3s, color 0.3s; /* Transition fluide pour la couleur de fond et des icônes */
-    border: none; /* Enlève les bordures du bouton */
-    padding: 10px; /* Espacement interne */
-    display: flex; /* Permet de centrer l'icône à l'intérieur du bouton */
-    justify-content: center; /* Centrer l'icône horizontalement */
-    align-items: center; /* Centrer l'icône verticalement */
-}
-
-button i {
-    font-size: 1.5rem; /* Taille de l'icône */
-    color: white; /* Couleur de l'icône par défaut */
-}
-
-button:hover {
-    background-color: #4c4c4c; /* Couleur de fond au survol */
-}
-
-button:hover i {
-    color: #007BFF; /* Changement de couleur de l'icône au survol (par exemple, bleu) */
-}
-
+    button {
+        background-color: #5a5a5a;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #4c4c4c;
+    }
 
     #emoji-picker {
         display: flex;
@@ -277,9 +259,9 @@ button:hover i {
    .notification {
     display: none; /* Caché par défaut */
     position: fixed;
-    top: 20%; /* Centrer verticalement */
+    top: 50%; /* Centrer verticalement */
     left: 50%; /* Centrer horizontalement */
-    transform: translate(-50%); /* Ajuste la position horizontalement */
+    transform: translate(-50%, -50%); /* Ajuste la position pour bien centrer */
     text-align: center;
     background-color: #911403;
     color: white;
@@ -401,9 +383,9 @@ button:hover i {
 <body>
 
     <div id="notification" class="notification">
-        ⚠️ATTENTION ! Après lecture uniquement, les messages reçus s'auto-détruisent au bout de 30 secondes.⚠️
+        ⚠️ATTENTION ! Les messages reçus se détruisent automatiquement après 10 secondes,<br> et ce, uniquement après leur lecture.⚠️
     </div>
-    <h1>🗨️GHOOST👻</h1>
+    <h1>🗨️TEST👻</h1>
     <!-- Section de connexion -->
     <div id="login-container">
         <input type="text" id="username" placeholder="Ton pseudo" required><br>
@@ -429,40 +411,13 @@ button:hover i {
         </div>
 
         <div id="messages"></div>
-       <div id="input-section">
-    <!-- Icône pour l'emoji -->
-    <button onclick="toggleEmojiPicker()">
-        <i class="fas fa-smile"></i> <!-- Icône Emoji -->
-    </button>
-    <input type="text" id="message-input" placeholder="Écrivez un message">
-    
-    <!-- Icône pour envoyer un message -->
-    <button onclick="sendMessage()">
-        <i class="fas fa-paper-plane"></i> <!-- Icône d'envoi de message -->
-    </button>
-    
-    <!-- Icône pour afficher tous les messages -->
-    <button onclick="toggleAllMessages()">
-        <i class="fas fa-eye"></i> <!-- Icône Afficher tous -->
-    </button>
-    
-    <!-- Icône pour quitter la salle -->
-    <button onclick="quitRoom()">
-        <i class="fas fa-sign-out-alt"></i> <!-- Icône Quitter -->
-    </button>
-</div>
-<div class="action-buttons">
-    <!-- Bouton Répondre avec une icône -->
-    <button class="reply-btn" onclick="prepareReply(key, data.message)">
-        <i class="fas fa-reply"></i> <!-- Icône Répondre -->
-    </button>
-
-    <!-- Bouton Supprimer avec une icône -->
-    <button class="btn-delete" onclick="deleteMessage(key)">
-        <i class="fas fa-trash-alt"></i> <!-- Icône Supprimer -->
-    </button>
-</div>
-
+        <div id="input-section">
+            <button onclick="toggleEmojiPicker()">😊</button>
+            <input type="text" id="message-input" placeholder="Écrivez un message">
+            <button onclick="sendMessage()">Envoyer</button>
+            <button onclick="toggleAllMessages()">Afficher tous</button>
+            <button onclick="quitRoom()">Quitter</button>
+        </div>
         <div id="emoji-picker" style="display: none;">
     <!-- Emoji Picker Content -->
 </div>
@@ -498,7 +453,7 @@ button:hover i {
             // Cacher la notification après quelques secondes
             setTimeout(() => {
                 notification.style.display = "none";
-            }, 10000); // La notification reste affichée 10 secondes
+            }, 5000); // La notification reste affichée 10 secondes
         }
 
         // Affiche la notification au chargement de la page
