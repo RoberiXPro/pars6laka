@@ -776,8 +776,8 @@ function quitRoom() {
        // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
     function startDeletionTimer(msgDiv, key) {
         setTimeout(function() {
-            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
-        }, 10000); // 10 secondes
+            deleteMessage(msgDiv, key); // Supprimer le message après 5 min
+        }, 300000); // 5 min
     }
 
     // Fonction de suppression du message
