@@ -20,7 +20,20 @@
     color: #ffffff;
     margin: 0;
 }
-
+ .notification {
+    display: none; /* Caché par défaut */
+    position: fixed;
+    top: 20%; /* Centrer verticalement */
+    left: 50%; /* Centrer horizontalement */
+    transform: translate(-50%); /* Ajuste la position horizontalement */
+    text-align: center;
+    background-color: #911403;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
 #login-container, #chat-container {
     width: 90%;
     max-width: 800px;
@@ -371,7 +384,7 @@ action-buttons {
 <body>
 
     <div id="notification" class="notification">
-        ⚠️ATTENTION ! Les messages reçus se détruisent automatiquement après 10 secondes,<br> et ce, uniquement après leur lecture.⚠️
+        ⚠️ATTENTION !<br> Les messages reçus se détruisent automatiquement après 10 secondes,<br> et ce, uniquement après leur lecture.⚠️
     </div>
     <h1>🗨️TEST👻</h1>
     <!-- Section de connexion -->
