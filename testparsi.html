@@ -301,7 +301,17 @@ action-buttons {
 .message:hover .flou {
     filter: none; /* Retire le flou au survol */
 }
+/* Afficher les boutons au survol */
+.message:hover .action-buttons {
+    display: flex;
+    justify-content: space-evenly;
+}
 
+/* Réorganiser les boutons en ligne */
+.action-buttons {
+    gap: 10px;
+    margin-top: 5px;
+}
 /* Media queries */
 @media (max-width: 600px) {
     #input-section {
@@ -708,19 +718,22 @@ function quitRoom() {
     location.reload();
 }
 
-   function displayMessage(key, data) {
+ function displayMessage(key, data) {
     var msgDiv = document.createElement("div");
     msgDiv.id = key;
     msgDiv.className = (data.user === username ? "message user1" : "message user2");
 
+    // Conteneur pour le nom d'utilisateur
     var usernameDiv = document.createElement("div");
     usernameDiv.className = "username " + (data.user === username ? "user1" : "user2");
     usernameDiv.textContent = data.user;
 
+    // Texte du message avec flou
     var textSpan = document.createElement("span");
     textSpan.className = "msg-text flou";
     textSpan.textContent = data.message;
 
+    // Timestamp du message
     var timeDiv = document.createElement("div");
     timeDiv.className = "timestamp";
     timeDiv.style.fontSize = "0.8rem";
@@ -734,98 +747,47 @@ function quitRoom() {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
-// Bouton pour afficher/cacher les icônes
-const toggleIconsBtn = document.createElement("button");
-toggleIconsBtn.textContent = "⬇️"; // Flèche vers le bas
-toggleIconsBtn.className = "toggle-icons-btn";
-toggleIconsBtn.onclick = () => toggleIcons(key);
-msgDiv.appendChild(toggleIconsBtn);
+    // Conteneur pour les boutons d'action
+    var actionButtons = document.createElement("div");
+    actionButtons.className = "action-buttons";
 
-       
-    // Reaction container
-    var reactionContainer = document.createElement("div");
-    reactionContainer.className = "reaction-container";
-    msgDiv.appendChild(reactionContainer);
+    // Bouton pour afficher/cacher les icônes
+    var toggleIconsBtn = document.createElement("button");
+    toggleIconsBtn.textContent = "⬇️"; // Flèche vers le bas
+    toggleIconsBtn.className = "toggle-icons-btn";
+    toggleIconsBtn.onclick = () => toggleIcons(key);
+    msgDiv.appendChild(toggleIconsBtn);
 
-     // Correction du chemin Firebase pour les réactions
-    db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function(snapshot) {
-        reactionContainer.innerHTML = ""; // Reset the content
-        if (snapshot.exists()) {
-            var reactionLabel = document.createElement("span");
-            reactionLabel.className = "reaction-label";
-            reactionLabel.textContent = "Réaction : ";
-            reactionContainer.appendChild(reactionLabel);
-            snapshot.forEach(function(childSnapshot) {
-                const reactionEmoji = document.createElement("span");
-                reactionEmoji.className = "reaction-emoji";
-                reactionEmoji.textContent = childSnapshot.val();
-                reactionContainer.appendChild(reactionEmoji);
-            });
-        }
-    });
-// Cacher les émojis par défaut
-if (window.innerWidth <= 600) { // Mobile-specific behavior
-    const emojiPickers = document.querySelectorAll(".emoji-picker-message");
-    emojiPickers.forEach((picker) => {
-        picker.style.display = "none";
-    });
-}
+    // Bouton pour ajouter une réaction emoji
+    var emojiBtn = document.createElement("button");
+    emojiBtn.textContent = "😀";
+    emojiBtn.className = "emoji-btn";
+    emojiBtn.onclick = () => toggleEmojiPickerMessage(key);
 
-       // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
-  function startDeletionTimer(msgDiv, key) {
-    setTimeout(() => {
-        deleteMessage(msgDiv, key); // Supprime le message après 10 secondes
-    }, 10000); // Timer de 10 secondes
-}
-
-    // Fonction de suppression du message
-    function deleteMessage(msgDiv, key) {
-        msgDiv.classList.add("fondu"); // Effet de fondu pour la suppression
-        setTimeout(function() {
-            msgDiv.remove(); // Suppression de l'élément du DOM
-            db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression du message dans Firebase
-        }, 1000); // Délai pour l'animation visuelle de suppression (1 seconde)
-    }
-
-   // L'événement pour démarrer la suppression après survol
-msgDiv.onmouseover = function() {
-    if (data.user !== username) { // Ne pas supprimer les messages envoyés par l'utilisateur
-        textSpan.classList.remove("flou"); // Retirer le flou
-        if (!msgDiv.dataset.timerStarted) { // Vérifie si un timer est déjà en cours
-            msgDiv.dataset.timerStarted = true; // Empêche de démarrer plusieurs fois
-            startDeletionTimer(msgDiv, key); // Lance la suppression automatique
-        }
-    }
-};
-
-
- // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
-    msgDiv.onmouseleave = function() {
-        textSpan.classList.add("flou");
+    // Bouton pour répondre
+    var replyBtn = document.createElement("button");
+    replyBtn.textContent = "Répondre";
+    replyBtn.className = "reply-btn";
+    replyBtn.onclick = function () {
+        prepareReply(key, data.message);
     };
 
-    if (data.replyTo) {
-        var replyDiv = document.createElement("div");
-        replyDiv.className = "citation flou";
-        replyDiv.style.backgroundColor = "#444";
-        replyDiv.style.padding = "5px";
-        replyDiv.style.marginBottom = "5px";
-        replyDiv.style.borderRadius = "5px";
-        replyDiv.textContent = "Réponse du : " + data.replyTo;
-        msgDiv.appendChild(replyDiv);
+    // Bouton pour supprimer
+    var deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Supprimer";
+    deleteBtn.className = "btn-delete";
+    deleteBtn.onclick = function () {
+        db.child("rooms/" + roomName + "/messages/" + key).remove();
+    };
 
-        setTimeout(function() {
-            replyDiv.classList.add("flou");
-        }, 15000);
-    }
+    actionButtons.appendChild(emojiBtn);
+    actionButtons.appendChild(replyBtn);
+    actionButtons.appendChild(deleteBtn);
 
-   // Emoji picker
-    const emojiBtn = document.createElement("button");
-    emojiBtn.className = "emoji-btn";
-    emojiBtn.textContent = "😀";
-    emojiBtn.onclick = () => toggleEmojiPickerMessage(key);
-    msgDiv.appendChild(emojiBtn);
+    // Ajout du conteneur d'actions au message
+    msgDiv.appendChild(actionButtons);
 
+    // Emoji picker (par message)
     const emojiPicker = document.createElement("div");
     emojiPicker.className = "emoji-picker-message";
     emojiPicker.id = `emoji-picker-${key}`;
@@ -841,37 +803,83 @@ msgDiv.onmouseover = function() {
     });
     msgDiv.appendChild(emojiPicker);
 
-    var actionButtons = document.createElement("div");
-    actionButtons.className = "action-buttons";
+    // Gestion des réactions (Firebase)
+    var reactionContainer = document.createElement("div");
+    reactionContainer.className = "reaction-container";
+    msgDiv.appendChild(reactionContainer);
 
-    var replyBtn = document.createElement("button");
-    replyBtn.textContent = "Répondre";
-    replyBtn.className = "reply-btn";
-    replyBtn.onclick = function() {
-        prepareReply(key, data.message);
+    db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function(snapshot) {
+        reactionContainer.innerHTML = ""; // Reset
+        if (snapshot.exists()) {
+            var reactionLabel = document.createElement("span");
+            reactionLabel.className = "reaction-label";
+            reactionLabel.textContent = "Réaction : ";
+            reactionContainer.appendChild(reactionLabel);
+            snapshot.forEach(function(childSnapshot) {
+                const reactionEmoji = document.createElement("span");
+                reactionEmoji.className = "reaction-emoji";
+                reactionEmoji.textContent = childSnapshot.val();
+                reactionContainer.appendChild(reactionEmoji);
+            });
+        }
+    });
+
+    // Afficher les citations en cas de réponse
+    if (data.replyTo) {
+        var replyDiv = document.createElement("div");
+        replyDiv.className = "citation flou";
+        replyDiv.style.backgroundColor = "#444";
+        replyDiv.style.padding = "5px";
+        replyDiv.style.marginBottom = "5px";
+        replyDiv.style.borderRadius = "5px";
+        replyDiv.textContent = "Réponse du : " + data.replyTo;
+        msgDiv.appendChild(replyDiv);
+
+        setTimeout(function() {
+            replyDiv.classList.add("flou");
+        }, 15000);
+    }
+
+    // Suppression automatique après lecture
+    function startDeletionTimer(msgDiv, key) {
+        setTimeout(() => {
+            deleteMessage(msgDiv, key);
+        }, 10000); // 10 secondes
+    }
+
+    function deleteMessage(msgDiv, key) {
+        msgDiv.classList.add("fondu");
+        setTimeout(function() {
+            msgDiv.remove();
+            db.child("rooms/" + roomName + "/messages/" + key).remove();
+        }, 1000);
+    }
+
+    msgDiv.onmouseover = function() {
+        if (data.user !== username) { // Ne pas supprimer les messages de l'utilisateur
+            textSpan.classList.remove("flou");
+            if (!msgDiv.dataset.timerStarted) {
+                msgDiv.dataset.timerStarted = true;
+                startDeletionTimer(msgDiv, key);
+            }
+        }
     };
 
-    var deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Supprimer";
-    deleteBtn.className = "btn-delete";
-    deleteBtn.onclick = function() {
-        db.child("rooms/" + roomName + "/messages/" + key).remove();
+    msgDiv.onmouseleave = function() {
+        textSpan.classList.add("flou");
     };
 
-    actionButtons.appendChild(replyBtn);
-    actionButtons.appendChild(deleteBtn);
-    msgDiv.appendChild(actionButtons);
-
+    // Ajout du message au conteneur principal
     document.getElementById("messages").appendChild(msgDiv);
 
-    // Effet de flou et affichage au survol
+    // Effet de flou et affichage des messages
     setTimeout(function() {
         textSpan.classList.add("flou");
     }, 15000);
 
     scrollToBottom();
 
-    // Notifications pour nouveaux messages
+    // Notification sonore pour nouveaux messages
     if (data.user !== username && document.visibilityState === 'hidden') {
         document.title = '💬 Nouveau message!';
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
