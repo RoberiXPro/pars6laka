@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    <!-- Version mandeh status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
+    <!-- Version mandeh, Version MOBILE status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
     <title>TEST Ghoost - Room sécurisé</title>
     <!-- Inclure Firebase SDK -->
@@ -361,7 +361,7 @@ action-buttons {
 <body>
 
     <div id="notification" class="notification">
-        ⚠️ATTENTION ! Les messages reçus se détruisent automatiquement après 30 secondes,<br> et ce, uniquement après leur lecture.⚠️
+        ⚠️ATTENTION ! Les messages reçus se détruisent automatiquement après 10 secondes,<br> et ce, uniquement après leur lecture.⚠️
     </div>
     <h1>🗨️TEST👻</h1>
     <!-- Section de connexion -->
@@ -437,52 +437,49 @@ action-buttons {
         // Affiche la notification au chargement de la page
         document.addEventListener("DOMContentLoaded", showNotification);
 
-function joinRoom() {
-    username = document.getElementById("username").value.trim();
-    roomName = document.getElementById("room-name-input").value.trim();
-    var password = document.getElementById("password-input").value.trim();
+    function joinRoom() {
+    username = document.getElementById("username").value;
+    roomName = document.getElementById("room-name-input").value;
+    var password = document.getElementById("password-input").value;
 
-   document.querySelector("button[onclick='joinRoom()']").addEventListener("click", () => {
-    console.log("Bouton cliqué."); // Debug
-});
-
-
-    if (!username || !roomName || !password) {
-        alert("Tous les champs doivent être remplis !");
-        console.log("Champs manquants !"); // Debug
-        return;
-    }
-
+    // Référence au room dans Firebase
     db = firebase.database().ref("rooms/" + roomName);
 
-    db.once('value')
-        .then(function (snapshot) {
-            console.log("Vérification de l'existence du room..."); // Debug
-            if (snapshot.exists()) {
-                var dbPassword = snapshot.child("password").val();
-                console.log("Mot de passe du room :", dbPassword); // Debug
-                if (dbPassword === password) {
-                    console.log("Mot de passe correct, passage au chat."); // Debug
-                    switchToChat();
-                } else {
-                    alert("Mot de passe incorrect !");
-                }
+    // Vérifie l'existence et le mot de passe du room
+    db.once('value').then(function(snapshot) {
+        if (snapshot.exists()) {
+            var dbPassword = snapshot.child("password").val();
+            if (dbPassword === password) {
+                alert("Connexion réussie !");
+                document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
+                switchToChat();
+
+                // Initialiser les listeners pour afficher les utilisateurs connectés
+                initializeUserListeners();
+
+                // Mettre à jour le statut de l'utilisateur en ligne
+                setOnlineStatus();
             } else {
-                console.log("Room non existant, création en cours..."); // Debug
-                db.set({
-                    password: password,
-                    messages: {}
-                }).then(() => {
-                    console.log("Room créé avec succès, passage au chat."); // Debug
-                    switchToChat();
-                }).catch(error => {
-                    console.error("Erreur lors de la création du room :", error);
-                });
+                alert("Mot de passe incorrect !");
             }
-        })
-        .catch(error => {
-            console.error("Erreur Firebase :", error);
-        });
+        } else {
+            // Créer le room si inexistant
+            db.set({
+                password: password,
+                messages: {}
+            }).then(() => {
+                alert("Room créé avec succès !");
+                document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
+                switchToChat();
+
+                // Initialiser les listeners pour afficher les utilisateurs connectés
+                initializeUserListeners();
+
+                // Mettre à jour le statut de l'utilisateur en ligne
+                setOnlineStatus();
+            });
+        }
+    });
 }
 
 firebase.database().ref("users").on("child_changed", function(snapshot) {
@@ -518,14 +515,11 @@ function initializeUserListeners() {
 
 // Fonction pour gérer le statut en ligne et hors ligne de l'utilisateur
 function setOnlineStatus() {
-    if (!username || !roomName) {
-        console.warn("Impossible de définir le statut en ligne : username ou roomName manquant.");
-        return;
-    }
+    if (!username || !roomName) return;
 
     var userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
 
-    firebase.database().ref(".info/connected").on("value", function (snapshot) {
+    firebase.database().ref(".info/connected").on("value", function(snapshot) {
         if (snapshot.val() === true) {
             userRef.set({
                 status: "en ligne",
@@ -538,7 +532,6 @@ function setOnlineStatus() {
         }
     });
 }
-
 
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
 function updateUserStatusUI(user, status) {
@@ -571,13 +564,11 @@ function removeUserFromUI(user) {
     }
 }
 
-  function switchToChat() {
-    console.log("Redirection vers le chat."); // Debug
-    document.getElementById("login-container").style.display = "none";
-    document.getElementById("chat-container").style.display = "block";
-    loadMessages();
-}
-
+    function switchToChat() {
+        document.getElementById("login-container").style.display = "none";
+        document.getElementById("chat-container").style.display = "block";
+        loadMessages();
+    }
 
 function sendMessage() {
     var messageInput = document.getElementById("message-input");
@@ -612,10 +603,6 @@ function sendMessage() {
 var childRemovedListenerSet = false;
 
 function loadMessages() {
-     if (!db) {
-        console.error("Firebase n'est pas initialisé. Impossible de charger les messages.");
-        return;
-    }
     // Écoute les nouveaux messages ajoutés pour les afficher
     if (!messageListener) {
         messageListener = function(snapshot) {
@@ -731,7 +718,7 @@ function quitRoom() {
     usernameDiv.textContent = data.user;
 
     var textSpan = document.createElement("span");
-    textSpan.className = "msg-text flou"; // Message flouté par défaut
+    textSpan.className = "msg-text flou";
     textSpan.textContent = data.message;
 
     var timeDiv = document.createElement("div");
@@ -747,27 +734,28 @@ function quitRoom() {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
-    // Bouton pour afficher/cacher les icônes
-    const toggleIconsBtn = document.createElement("button");
-    toggleIconsBtn.textContent = "⬇️"; // Flèche vers le bas
-    toggleIconsBtn.className = "toggle-icons-btn";
-    toggleIconsBtn.onclick = () => toggleIcons(key);
-    msgDiv.appendChild(toggleIconsBtn);
+// Bouton pour afficher/cacher les icônes
+const toggleIconsBtn = document.createElement("button");
+toggleIconsBtn.textContent = "⬇️"; // Flèche vers le bas
+toggleIconsBtn.className = "toggle-icons-btn";
+toggleIconsBtn.onclick = () => toggleIcons(key);
+msgDiv.appendChild(toggleIconsBtn);
 
+       
     // Reaction container
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
     msgDiv.appendChild(reactionContainer);
 
-    // Correction du chemin Firebase pour les réactions
-    db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function (snapshot) {
+     // Correction du chemin Firebase pour les réactions
+    db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function(snapshot) {
         reactionContainer.innerHTML = ""; // Reset the content
         if (snapshot.exists()) {
             var reactionLabel = document.createElement("span");
             reactionLabel.className = "reaction-label";
             reactionLabel.textContent = "Réaction : ";
             reactionContainer.appendChild(reactionLabel);
-            snapshot.forEach(function (childSnapshot) {
+            snapshot.forEach(function(childSnapshot) {
                 const reactionEmoji = document.createElement("span");
                 reactionEmoji.className = "reaction-emoji";
                 reactionEmoji.textContent = childSnapshot.val();
@@ -775,53 +763,19 @@ function quitRoom() {
             });
         }
     });
-
-    // Gérer le flou et le défloutage
-    // PC: Défloutage au survol
-    msgDiv.addEventListener("mouseenter", () => {
-        if (window.innerWidth > 600) { // PC uniquement
-            textSpan.classList.remove("flou");
-        }
+// Cacher les émojis par défaut
+if (window.innerWidth <= 600) { // Mobile-specific behavior
+    const emojiPickers = document.querySelectorAll(".emoji-picker-message");
+    emojiPickers.forEach((picker) => {
+        picker.style.display = "none";
     });
-
-    msgDiv.addEventListener("mouseleave", () => {
-        if (window.innerWidth > 600) { // PC uniquement
-            textSpan.classList.add("flou");
-        }
-    });
-
-    // Mobile: Défloutage au toucher
-    msgDiv.addEventListener("touchstart", () => {
-        if (window.innerWidth <= 600) { // Mobile uniquement
-            textSpan.classList.remove("flou");
-        }
-    });
-
-    msgDiv.addEventListener("touchend", () => {
-        if (window.innerWidth <= 600) { // Mobile uniquement
-            textSpan.classList.add("flou");
-        }
-    });
-
-    // Ajouter le message au conteneur
-    document.getElementById("messages").appendChild(msgDiv);
-
-    // Effet de flou initial
-    setTimeout(function () {
-        textSpan.classList.add("flou");
-    }, 15000);
-
-    // Notifications pour nouveaux messages
-    if (data.user !== username && document.visibilityState === 'hidden') {
-        document.title = '💬 Nouveau message!';
-        notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
-    }
 }
+
        // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
   function startDeletionTimer(msgDiv, key) {
     setTimeout(() => {
-        deleteMessage(msgDiv, key); // Supprime le message après 30 secondes
-    }, 30000); // Timer de 30 secondes
+        deleteMessage(msgDiv, key); // Supprime le message après 10 secondes
+    }, 10000); // Timer de 10 secondes
 }
 
     // Fonction de suppression du message
@@ -834,7 +788,6 @@ function quitRoom() {
     }
 
    // L'événement pour démarrer la suppression après survol
-var msgDiv = document.createElement("div"); // Déclare et initialise msgDiv
 msgDiv.onmouseover = function() {
     if (data.user !== username) { // Ne pas supprimer les messages envoyés par l'utilisateur
         textSpan.classList.remove("flou"); // Retirer le flou
@@ -844,7 +797,6 @@ msgDiv.onmouseover = function() {
         }
     }
 };
-
 
 
  // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
@@ -924,7 +876,8 @@ msgDiv.onmouseover = function() {
         document.title = '💬 Nouveau message!';
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
     }
-    
+}
+
    
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
