@@ -184,7 +184,10 @@ button:hover {
 .emoji-btn:hover {
     transform: scale(1.2);
 }
-
+/* Caché par défaut pour les icônes et boutons */
+.message .action-buttons {
+    display: none;
+}
 #messages {
     max-height: 50vh;
     overflow-y: auto;
@@ -192,7 +195,9 @@ button:hover {
     margin: 0 auto;
     box-sizing: border-box;
 }
-
+action-buttons {
+    transition: opacity 0.3s ease-in-out;
+}
 .message {
     padding: 10px;
     margin-bottom: 8px;
@@ -221,7 +226,23 @@ button:hover {
 .msg-text {
     margin-bottom: 5px;
 }
-
+/* Bouton pour afficher les icônes */
+.message .toggle-icons-btn {
+    display: block;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #444;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    color: white;
+    font-size: 1rem;
+    text-align: center;
+    line-height: 20px;
+}
 .citation {
     background-color: #272222;
     padding: 5px;
@@ -229,6 +250,11 @@ button:hover {
     border-radius: 5px;
     font-style: italic;
     color: #ccc;
+}
+/* Afficher les boutons quand toggle est activé */
+.message.show-icons .action-buttons {
+    display: flex;
+    justify-content: space-between;
 }
 
 .reaction-container {
@@ -288,6 +314,9 @@ button:hover {
         width: 30%;
         font-size: 0.8rem;
     }
+    #messages {
+        max-height: 40vh;
+    }
 
     .emoji-btn {
         width: 30px;
@@ -316,6 +345,14 @@ button:hover {
     .reply-btn, .btn-delete {
         font-size: 0.75rem;
         padding: 6px 12px;
+    }
+    .message {
+        max-width: 90%;
+    }
+
+    .emoji-picker-message {
+        max-width: 150px;
+        transition: opacity 0.3s ease-in-out;
     }
 }
 </style>
@@ -601,6 +638,10 @@ function loadMessages() {
         const picker = document.getElementById("emoji-picker");
         picker.style.display = picker.style.display === "none" ? "flex" : "none";
     }
+function toggleIcons(messageId) {
+    const messageDiv = document.getElementById(messageId);
+    messageDiv.classList.toggle('show-icons'); // Ajoute ou enlève la classe pour afficher les icônes
+}
 
     function loadEmojis() {
         const picker = document.getElementById("emoji-picker");
@@ -692,6 +733,14 @@ function quitRoom() {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
+// Bouton pour afficher/cacher les icônes
+const toggleIconsBtn = document.createElement("button");
+toggleIconsBtn.textContent = "⬇️"; // Flèche vers le bas
+toggleIconsBtn.className = "toggle-icons-btn";
+toggleIconsBtn.onclick = () => toggleIcons(key);
+msgDiv.appendChild(toggleIconsBtn);
+
+       
     // Reaction container
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
@@ -713,6 +762,10 @@ function quitRoom() {
             });
         }
     });
+// Cacher les émojis par défaut
+if (window.innerWidth <= 600) { // Mobile check
+    emojiPicker.style.display = "none";
+}
 
        // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
     function startDeletionTimer(msgDiv, key) {
