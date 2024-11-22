@@ -437,50 +437,69 @@ action-buttons {
         // Affiche la notification au chargement de la page
         document.addEventListener("DOMContentLoaded", showNotification);
 
-    function joinRoom() {
-    username = document.getElementById("username").value;
-    roomName = document.getElementById("room-name-input").value;
-    var password = document.getElementById("password-input").value;
+function joinRoom() {
+    username = document.getElementById("username").value.trim();
+    roomName = document.getElementById("room-name-input").value.trim();
+    var password = document.getElementById("password-input").value.trim();
+
+   // Validation des entrées utilisateur
+    if (!username || !roomName || !password) {
+        alert("Tous les champs doivent être remplis !");
+        ["username", "room-name-input", "password-input"].forEach(id => {
+            const input = document.getElementById(id);
+            if (!input.value.trim()) {
+                input.style.border = "2px solid red"; // Met en surbrillance les champs vides
+            } else {
+                input.style.border = ""; // Réinitialise la bordure des champs valides
+            }
+        });
+        return; // Stoppe l'exécution de la fonction
+    }
+
+    // Réinitialiser les bordures après validation
+    ["username", "room-name-input", "password-input"].forEach(id => {
+        document.getElementById(id).style.border = ""; // Réinitialise les bordures si tous les champs sont remplis
+    });
 
     // Référence au room dans Firebase
     db = firebase.database().ref("rooms/" + roomName);
 
     // Vérifie l'existence et le mot de passe du room
-    db.once('value').then(function(snapshot) {
-        if (snapshot.exists()) {
-            var dbPassword = snapshot.child("password").val();
-            if (dbPassword === password) {
-                alert("Connexion réussie !");
-                document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
-                switchToChat();
-
-                // Initialiser les listeners pour afficher les utilisateurs connectés
-                initializeUserListeners();
-
-                // Mettre à jour le statut de l'utilisateur en ligne
-                setOnlineStatus();
+    db.once('value')
+        .then(function (snapshot) {
+            if (snapshot.exists()) {
+                var dbPassword = snapshot.child("password").val();
+                if (dbPassword === password) {
+                    alert("Connexion réussie !");
+                    document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
+                    switchToChat();
+                    initializeUserListeners();
+                    setOnlineStatus();
+                } else {
+                    alert("Mot de passe incorrect !");
+                }
             } else {
-                alert("Mot de passe incorrect !");
+                // Créer le room si inexistant
+                db.set({
+                    password: password,
+                    messages: {}
+                }).then(() => {
+                    alert("Room créé avec succès !");
+                    document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
+                    switchToChat();
+                    initializeUserListeners();
+                    setOnlineStatus();
+                }).catch(error => {
+                    console.error("Erreur lors de la création du room :", error);
+                });
             }
-        } else {
-            // Créer le room si inexistant
-            db.set({
-                password: password,
-                messages: {}
-            }).then(() => {
-                alert("Room créé avec succès !");
-                document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
-                switchToChat();
-
-                // Initialiser les listeners pour afficher les utilisateurs connectés
-                initializeUserListeners();
-
-                // Mettre à jour le statut de l'utilisateur en ligne
-                setOnlineStatus();
-            });
-        }
-    });
+        })
+        .catch(error => {
+            console.error("Erreur lors de la vérification du room :", error);
+            alert("Une erreur est survenue. Veuillez réessayer.");
+        });
 }
+
 
 firebase.database().ref("users").on("child_changed", function(snapshot) {
     var user = snapshot.key;
@@ -515,11 +534,14 @@ function initializeUserListeners() {
 
 // Fonction pour gérer le statut en ligne et hors ligne de l'utilisateur
 function setOnlineStatus() {
-    if (!username || !roomName) return;
+    if (!username || !roomName) {
+        console.warn("Impossible de définir le statut en ligne : username ou roomName manquant.");
+        return;
+    }
 
     var userRef = firebase.database().ref("rooms/" + roomName + "/onlineUsers/" + username);
 
-    firebase.database().ref(".info/connected").on("value", function(snapshot) {
+    firebase.database().ref(".info/connected").on("value", function (snapshot) {
         if (snapshot.val() === true) {
             userRef.set({
                 status: "en ligne",
@@ -532,6 +554,7 @@ function setOnlineStatus() {
         }
     });
 }
+
 
 //Fonction pour Supprimer un Utilisateur de l’Interface (removeUserFromUI)    
 function updateUserStatusUI(user, status) {
@@ -603,6 +626,10 @@ function sendMessage() {
 var childRemovedListenerSet = false;
 
 function loadMessages() {
+     if (!db) {
+        console.error("Firebase n'est pas initialisé. Impossible de charger les messages.");
+        return;
+    }
     // Écoute les nouveaux messages ajoutés pour les afficher
     if (!messageListener) {
         messageListener = function(snapshot) {
