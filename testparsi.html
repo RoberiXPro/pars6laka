@@ -442,64 +442,45 @@ function joinRoom() {
     roomName = document.getElementById("room-name-input").value.trim();
     var password = document.getElementById("password-input").value.trim();
 
-   // Validation des entrées utilisateur
+    console.log("Tentative de connexion avec :", username, roomName, password); // Debug
+
     if (!username || !roomName || !password) {
         alert("Tous les champs doivent être remplis !");
-        ["username", "room-name-input", "password-input"].forEach(id => {
-            const input = document.getElementById(id);
-            if (!input.value.trim()) {
-                input.style.border = "2px solid red"; // Met en surbrillance les champs vides
-            } else {
-                input.style.border = ""; // Réinitialise la bordure des champs valides
-            }
-        });
-        return; // Stoppe l'exécution de la fonction
+        console.log("Champs manquants !"); // Debug
+        return;
     }
 
-    // Réinitialiser les bordures après validation
-    ["username", "room-name-input", "password-input"].forEach(id => {
-        document.getElementById(id).style.border = ""; // Réinitialise les bordures si tous les champs sont remplis
-    });
-
-    // Référence au room dans Firebase
     db = firebase.database().ref("rooms/" + roomName);
 
-    // Vérifie l'existence et le mot de passe du room
     db.once('value')
         .then(function (snapshot) {
+            console.log("Vérification de l'existence du room..."); // Debug
             if (snapshot.exists()) {
                 var dbPassword = snapshot.child("password").val();
+                console.log("Mot de passe du room :", dbPassword); // Debug
                 if (dbPassword === password) {
-                    alert("Connexion réussie !");
-                    document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
+                    console.log("Mot de passe correct, passage au chat."); // Debug
                     switchToChat();
-                    initializeUserListeners();
-                    setOnlineStatus();
                 } else {
                     alert("Mot de passe incorrect !");
                 }
             } else {
-                // Créer le room si inexistant
+                console.log("Room non existant, création en cours..."); // Debug
                 db.set({
                     password: password,
                     messages: {}
                 }).then(() => {
-                    alert("Room créé avec succès !");
-                    document.getElementById("room-name-display").textContent = "Lieu de RDV : " + roomName;
+                    console.log("Room créé avec succès, passage au chat."); // Debug
                     switchToChat();
-                    initializeUserListeners();
-                    setOnlineStatus();
                 }).catch(error => {
                     console.error("Erreur lors de la création du room :", error);
                 });
             }
         })
         .catch(error => {
-            console.error("Erreur lors de la vérification du room :", error);
-            alert("Une erreur est survenue. Veuillez réessayer.");
+            console.error("Erreur Firebase :", error);
         });
 }
-
 
 firebase.database().ref("users").on("child_changed", function(snapshot) {
     var user = snapshot.key;
@@ -587,11 +568,13 @@ function removeUserFromUI(user) {
     }
 }
 
-    function switchToChat() {
-        document.getElementById("login-container").style.display = "none";
-        document.getElementById("chat-container").style.display = "block";
-        loadMessages();
-    }
+  function switchToChat() {
+    console.log("Redirection vers le chat."); // Debug
+    document.getElementById("login-container").style.display = "none";
+    document.getElementById("chat-container").style.display = "block";
+    loadMessages();
+}
+
 
 function sendMessage() {
     var messageInput = document.getElementById("message-input");
