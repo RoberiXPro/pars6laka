@@ -834,6 +834,7 @@ function quitRoom() {
     }
 
    // L'événement pour démarrer la suppression après survol
+var msgDiv = document.createElement("div"); // Déclare et initialise msgDiv
 msgDiv.onmouseover = function() {
     if (data.user !== username) { // Ne pas supprimer les messages envoyés par l'utilisateur
         textSpan.classList.remove("flou"); // Retirer le flou
@@ -843,6 +844,7 @@ msgDiv.onmouseover = function() {
         }
     }
 };
+
 
 
  // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
