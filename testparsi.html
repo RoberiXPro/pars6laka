@@ -306,9 +306,9 @@ action-buttons {
 /* Conteneur flottant pour les boutons */
 .action-buttons {
     position: absolute;
-    top: -40px; /* Boutons juste au-dessus du message */
+    top: -40px; /* Position au-dessus du message */
     right: 10px;
-    display: flex;
+    display: none; /* Caché par défaut */
     gap: 5px;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.8);
@@ -316,8 +316,9 @@ action-buttons {
     padding: 5px;
 }
 
-/* Afficher les boutons au survol ou au clic */
-.message:hover .action-buttons,
+.message:hover .action-buttons {
+    display: flex; /* Affiche les boutons au survol */
+}
 .message:focus-within .action-buttons {
     display: flex;
 }
@@ -804,6 +805,18 @@ actionButtons.appendChild(deleteBtn);
 // Ajout des boutons au message (flottants)
 msgDiv.style.position = "relative"; // Nécessaire pour le positionnement absolu
 msgDiv.appendChild(actionButtons);
+     
+msgDiv.onclick = function () {
+    // Ferme tous les autres boutons d'action
+    document.querySelectorAll(".action-buttons").forEach((buttons) => {
+        if (buttons !== actionButtons) {
+            buttons.style.display = "none";
+        }
+    });
+
+    // Affiche ou masque les boutons d'action du message actuel
+    actionButtons.style.display = actionButtons.style.display === "flex" ? "none" : "flex";
+};
 
 
     // Emoji picker (par message)
@@ -899,6 +912,19 @@ msgDiv.appendChild(emojiPicker);
 
     msgDiv.onmouseleave = function() {
         textSpan.classList.add("flou");
+    };
+
+        // Ajout des boutons d'action au message
+    actionButtons.style.display = "none"; // Caché par défaut
+    msgDiv.appendChild(actionButtons);
+    // Affichage ou masquage des boutons au clic (mobile-friendly)
+    msgDiv.onclick = function () {
+        document.querySelectorAll(".action-buttons").forEach((buttons) => {
+            if (buttons !== actionButtons) {
+                buttons.style.display = "none";
+            }
+        });
+        actionButtons.style.display = actionButtons.style.display === "flex" ? "none" : "flex";
     };
 
     // Ajout du message au conteneur principal
