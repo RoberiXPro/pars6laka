@@ -442,7 +442,10 @@ function joinRoom() {
     roomName = document.getElementById("room-name-input").value.trim();
     var password = document.getElementById("password-input").value.trim();
 
-    console.log("Tentative de connexion avec :", username, roomName, password); // Debug
+   document.querySelector("button[onclick='joinRoom()']").addEventListener("click", () => {
+    console.log("Bouton cliqué."); // Debug
+});
+
 
     if (!username || !roomName || !password) {
         alert("Tous les champs doivent être remplis !");
