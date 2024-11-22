@@ -22,7 +22,7 @@
 }
 
 #login-container, #chat-container {
-    width: 90%; 
+    width: 90%;
     max-width: 800px;
     margin: 0 auto;
     background: rgba(60, 60, 60, 0.9);
@@ -52,28 +52,81 @@
     width: auto;
     margin: 0 5px;
     flex: 0;
+    background-color: #617988; /* Couleur des boutons */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .reply-btn:hover {
-    background-color: #2980b9;
+    background-color: #2980b9; /* Couleur au survol */
 }
 
-#input-section {
+.btn-delete:hover {
+    background-color: #d32f2f; /* Couleur au survol pour Supprimer */
+}
+
+#user-list {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #333;
+    border-radius: 10px;
+    color: #ffd700;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: left;
+}
+
+#user-list h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #ffd700;
+    text-align: center;
+    text-shadow: 0 2px 5px rgba(255, 215, 0, 0.6);
+}
+
+#online-users {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#online-users li {
     display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
     align-items: center;
-    gap: 5px;
-}
-
-#input-section button {
-    flex: 1;
     padding: 8px;
-    font-size: 0.9rem;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    background-color: #444;
+    transition: background-color 0.3s ease;
 }
 
-#input-section input {
-    flex: 2;
+#online-users li:hover {
+    background-color: #555;
+}
+
+.user-status {
+    font-weight: bold;
+    color: #fff;
+    font-size: 1em;
+    margin-left: 10px;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-color: green;
+    transition: background-color 0.3s ease;
+}
+
+.status-offline .status-indicator {
+    background-color: gray;
 }
 
 input, button {
@@ -140,6 +193,64 @@ button:hover {
     box-sizing: border-box;
 }
 
+.message {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    word-wrap: break-word;
+    max-width: 70%;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.message.user1 {
+    background: linear-gradient(to right, #4a4a5f, #3b3b4e);
+    align-self: flex-end;
+    border-radius: 10px 10px 0 10px;
+}
+
+.message.user2 {
+    background: linear-gradient(to right, #ea5b00, #c7965d);
+    align-self: flex-start;
+    border-radius: 10px 10px 10px 0;
+}
+
+.msg-text {
+    margin-bottom: 5px;
+}
+
+.citation {
+    background-color: #272222;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    font-style: italic;
+    color: #ccc;
+}
+
+.reaction-container {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.reaction-label {
+    font-size: 0.8rem;
+    color: #ddd;
+    margin-right: 5px;
+    font-style: italic;
+}
+
+.reaction-emoji {
+    font-size: 1.2rem;
+    margin-right: 5px;
+    cursor: default;
+    display: inline-block;
+}
+
 /* Media queries */
 @media (max-width: 600px) {
     #input-section {
@@ -182,6 +293,7 @@ button:hover {
         padding: 6px 12px;
     }
 }
+
 </style>
 
 </head>
