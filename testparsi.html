@@ -812,22 +812,28 @@ msgDiv.appendChild(actionButtons);
 
 
     // Emoji picker (par message)
-    const emojiPicker = document.createElement("div");
+ const emojiPicker = document.createElement("div");
 emojiPicker.className = "emoji-picker-message";
 emojiPicker.id = `emoji-picker-${key}`;
 emojiPicker.style.position = "absolute";
 emojiPicker.style.bottom = "calc(100% + 10px)"; // Flottant au-dessus du cadre
 emojiPicker.style.right = "0";
-        const emojiSpan = document.createElement("span");
-        emojiSpan.textContent = emoji;
-        emojiSpan.className = "emoji";
-        emojiSpan.onclick = () => {
-            addReactionEmoji(key, emoji);
-            emojiPicker.style.display = "none"; // Masque après sélection
-        };
-        emojiPicker.appendChild(emojiSpan);
-    });
-    msgDiv.appendChild(emojiPicker);
+
+// Boucle pour ajouter chaque emoji
+emojis.forEach((emoji) => {
+    const emojiSpan = document.createElement("span");
+    emojiSpan.textContent = emoji;
+    emojiSpan.className = "emoji";
+    emojiSpan.onclick = () => {
+        addReactionEmoji(key, emoji);
+        emojiPicker.style.display = "none"; // Masque après sélection
+    };
+    emojiPicker.appendChild(emojiSpan);
+});
+
+// Ajout du picker au message
+msgDiv.appendChild(emojiPicker);
+
 
     // Gestion des réactions (Firebase)
     var reactionContainer = document.createElement("div");
