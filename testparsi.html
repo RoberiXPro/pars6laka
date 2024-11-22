@@ -2,28 +2,29 @@
 <html>
     <!-- Version mandeh status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
-    <title>Ghoost - Room sécurisé</title>
+    <title>TEST Ghoost - Room sécurisé</title>
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
 <style>
-    body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        background: linear-gradient(135deg, #2e2e2e, #1f1f1f);
-        font-family: 'Arial', sans-serif;
-        color: #ffffff;
-        margin: 0;
-    }
-    #login-container, #chat-container {
-    width: 90%; /* Utilise une largeur relative */
-    max-width: 800px; /* Largeur maximale sur PC */
-    margin: 0 auto; /* Centre horizontalement */
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #2e2e2e, #1f1f1f);
+    font-family: 'Arial', sans-serif;
+    color: #ffffff;
+    margin: 0;
+}
+
+#login-container, #chat-container {
+    width: 90%; 
+    max-width: 800px;
+    margin: 0 auto;
     background: rgba(60, 60, 60, 0.9);
     padding: 20px;
     border-radius: 10px;
@@ -31,367 +32,156 @@
     display: none;
 }
 
-    #login-container {
-        display: block;
-        animation: fadeIn 0.5s ease;
-    }
-    #reply-container {
-        display: none;
-        background-color: #272222;
-        padding: 5px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        color: #fff;
-    }
-    .reply-btn {
-        background-color: #617988;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-left: 10px;
-        font-size: 0.9rem;
-        padding: 5px;
-    }
-    .reply-btn:hover {
-        background-color: #2980b9;
-    }
-    #user-list {
-        margin-top: 15px;
-        padding: 10px;
-        background-color: #333;
-        border-radius: 10px;
-        color: #ffd700;
-        width: 100%;
-        max-width: 350px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        text-align: left;
-    }
-
-    #user-list h2 {
-        font-size: 1.2em;
-        margin-bottom: 10px;
-        color: #ffd700;
-        text-align: center;
-        text-shadow: 0 2px 5px rgba(255, 215, 0, 0.6);
-    }
-
-    #online-users {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        max-height: 200px;
-        overflow-y: auto;
-    }
-
-    #online-users li {
-        display: flex;
-        align-items: center;
-        padding: 8px;
-        margin-bottom: 5px;
-        border-radius: 5px;
-        background-color: #444;
-        transition: background-color 0.3s ease;
-    }
-
-    #online-users li:hover {
-        background-color: #555;
-    }
-
-    .user-status {
-        font-weight: bold;
-        color: #fff;
-        font-size: 1em;
-        margin-left: 10px;
-    }
-
-    .status-indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 10px;
-        background-color: green;
-        transition: background-color 0.3s ease;
-    }
-
-    .status-offline .status-indicator {
-        background-color: gray;
-    }
-#input-section {
-    display: flex;
-    flex-wrap: wrap; /* Les éléments passent à la ligne si nécessaire */
-    gap: 10px;
-    justify-content: space-between;
+#login-container {
+    display: block;
+    animation: fadeIn 0.5s ease;
 }
 
-   input, button {
+#reply-container {
+    display: none;
+    background-color: #272222;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.reply-btn, .btn-delete {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    width: auto;
+    margin: 0 5px;
+    flex: 0;
+}
+
+.reply-btn:hover {
+    background-color: #2980b9;
+}
+
+#input-section {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+#input-section button {
+    flex: 1;
+    padding: 8px;
+    font-size: 0.9rem;
+}
+
+#input-section input {
+    flex: 2;
+}
+
+input, button {
     padding: 10px;
     border-radius: 5px;
     border: none;
     outline: none;
     font-size: 1rem;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-    width: 100%; /* Prend toute la largeur disponible */
-    margin-bottom: 10px; /* Ajoute un espace vertical entre les éléments */
+    margin-bottom: 10px;
     box-sizing: border-box;
 }
 
-    input {
-        width: 100%;
-        margin-bottom: 10px;
-        background-color: #444;
-        color: #fff;
-    }
-    button {
-        background-color: #5a5a5a;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    button:hover {
-        background-color: #4c4c4c;
-    }
-
-    #emoji-picker {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        max-width: 200px;
-        background-color: #333;
-        border-radius: 10px;
-        padding: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        position: absolute;
-        bottom: 60px;
-        left: 20px;
-    }
-    .emoji-picker-message {
-        display: none;
-        position: absolute;
-        bottom: 25px;
-        right: 5px;
-        background-color: #333;
-        border-radius: 10px;
-        padding: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 10;
-        max-width: 200px;
-        flex-wrap: wrap;
-        gap: 5px;
-    }
-    .emoji-btn {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        font-size: 1rem;
-        cursor: pointer;
-        background: transparent;
-        border: none;
-        color: #ffd700;
-        transition: transform 0.2s ease;
-    }
-    .emoji-btn:hover {
-        transform: scale(1.2);
-    }
-    .emoji {
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 5px;
-        transition: transform 0.1s ease;
-    }
-    .emoji:hover {
-        transform: scale(1.2);
-    }
-   #messages {
-    max-height: 50vh; /* Hauteur adaptative sur petits écrans */
-    overflow-y: auto; /* Ajoute un défilement vertical */
-    width: 100%; /* Occupe toute la largeur disponible */
-    margin: 0 auto;
-    box-sizing: border-box; /* Inclut les bordures et le padding dans la largeur */
+input {
+    background-color: #444;
+    color: #fff;
 }
 
-    .message {
-        padding: 10px;
-        margin-bottom: 8px;
-        border-radius: 5px;
-        word-wrap: break-word;
-        max-width: 70%;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        position: relative;
-    }
-    .message.user1 {
-        background: linear-gradient(to right, #4a4a5f, #3b3b4e);
-        align-self: flex-end;
-        border-radius: 10px 10px 0 10px;
-    }
-    .message.user2 {
-        background: linear-gradient(to right, #ea5b00, #c7965d);
-        align-self: flex-start;
-        border-radius: 10px 10px 10px 0;
-    }
-    .msg-text {
-        margin-bottom: 5px;
-    }
-    .citation {
-        background-color: #272222;
-        padding: 5px;
-        margin-bottom: 5px;
-        border-radius: 5px;
-        font-style: italic;
-        color: #ccc;
-    }
-    .reaction-container {
-        margin-top: 5px;
-        display: flex;
-        align-items: center;
-    }
-    .reaction-label {
-        font-size: 0.8rem;
-        color: #ddd;
-        margin-right: 5px;
-        font-style: italic;
-    }
-    .reaction-emoji {
-        font-size: 1.2rem;
-        margin-right: 5px;
-        cursor: default;
-        display: inline-block;
-    }
-    .username.user1 {
-        display: inline-block;
-        font-size: 0.9rem;
-        font-weight: bold;
-        color: #fff;
-        background: linear-gradient(135deg, #451300, #2e4061);
-        padding: 5px 8px;
-        border-radius: 6px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-   .notification {
-    display: none; /* Caché par défaut */
-    position: fixed;
-    top: 50%; /* Centrer verticalement */
-    left: 50%; /* Centrer horizontalement */
-    transform: translate(-50%, -50%); /* Ajuste la position pour bien centrer */
-    text-align: center;
-    background-color: #911403;
+button {
+    background-color: #5a5a5a;
     color: white;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
-    .username.user2 {
-        display: inline-block;
-        font-size: 0.9rem;
-        font-weight: bold;
-        color: #fff;
-        background: linear-gradient(135deg, #782b00, #713c07);
-        padding: 5px 8px;
-        border-radius: 6px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .username.user1:hover,
-    .username.user2:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 8px rgba(52, 152, 219, 0.6);
-    }
-    .flou {
-        filter: blur(4px);
-        transition: filter 0.3s ease;
-    }
-    .message:hover .flou {
-        filter: none;
-    }
-    h1 {
-        font-size: 3em;
-        color: #d3d3d3;
-        margin-bottom: 20px;
-        padding: 20px 40px;
-        border-radius: 15px;
-        text-align: center;
-        background: linear-gradient(135deg, #4b4b5a, #353543, #2e2e3b);
-        background-size: 200% 200%;
-        animation: gradientBackground 6s ease infinite;
-        text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
-        border: 2px solid #4b4b5a;
-        box-shadow: 0 0 15px rgba(50, 50, 50, 0.4), 0 0 30px rgba(30, 30, 30, 0.3);
-        transition: transform 0.3s ease;
+
+button:hover {
+    background-color: #4c4c4c;
+}
+
+#emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 200px;
+    background-color: #333;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    bottom: 60px;
+    left: 20px;
+}
+
+.emoji-btn {
+    font-size: 1rem;
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    border-radius: 50%;
+    background-color: transparent;
+    color: #ffd700;
+    transition: transform 0.1s ease;
+}
+
+.emoji-btn:hover {
+    transform: scale(1.2);
+}
+
+#messages {
+    max-height: 50vh;
+    overflow-y: auto;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Media queries */
+@media (max-width: 600px) {
+    #input-section {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
     }
 
-    @keyframes gradientBackground {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    #input-section button {
+        width: 30%;
+        font-size: 0.8rem;
     }
 
-    h1:hover {
-        transform: scale(1.05);
+    .emoji-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
     }
 
-    .action-buttons {
-        display: flex;
-        gap: 5px;
-    }
-
-    .action-buttons .btn-reply {
-        background-color: #4a4a5f;
-        color: #e6e6e6;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+    .reply-btn, .btn-delete {
+        font-size: 0.7rem;
         padding: 5px;
-    }
-
-    .action-buttons .btn-reply:hover {
-        background-color: #3a3a48;
-    }
-
-    .action-buttons .btn-delete {
-        background-color: #7b5555;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        padding: 5px;
-    }
-
-    .action-buttons .btn-delete:hover {
-        background-color: #d32f2f;
-    }
-
-    /* Ajout de media queries pour adaptation aux tablettes */
-  @media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-    h1 {
-        font-size: 2rem; /* Réduit la taille des titres */
-    }
-    #messages {
-        max-height: 40vh; /* Réduit la hauteur des messages */
-    }
-    .message {
-        max-width: 90%; /* Adapte les messages à la largeur de l'écran */
-    }
-    button, input {
-        font-size: 0.9rem; /* Réduit la taille des textes */
-        padding: 8px;
+        margin: 2px;
     }
 }
+
 @media (min-width: 600px) and (max-width: 900px) {
-    #login-container, #chat-container {
-        width: 80%; /* Réduit la largeur pour les tablettes */
+    #input-section {
+        flex-wrap: nowrap;
+        justify-content: space-between;
     }
-    h1 {
-        font-size: 2.5rem; /* Taille intermédiaire pour le titre */
+
+    .emoji-btn {
+        width: 35px;
+        height: 35px;
+    }
+
+    .reply-btn, .btn-delete {
+        font-size: 0.75rem;
+        padding: 6px 12px;
     }
 }
-
-
 </style>
 
 </head>
