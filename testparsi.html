@@ -6,6 +6,8 @@
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
 <style>
     body {
         display: flex;
@@ -19,14 +21,16 @@
         margin: 0;
     }
     #login-container, #chat-container {
-        width: 70%;
-        max-width: 800px;
-        background: rgba(60, 60, 60, 0.9);
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
-        display: none;
-    }
+    width: 90%; /* Utilise une largeur relative */
+    max-width: 800px; /* Largeur maximale sur PC */
+    margin: 0 auto; /* Centre horizontalement */
+    background: rgba(60, 60, 60, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
     #login-container {
         display: block;
         animation: fadeIn 0.5s ease;
@@ -113,15 +117,25 @@
     .status-offline .status-indicator {
         background-color: gray;
     }
+#input-section {
+    display: flex;
+    flex-wrap: wrap; /* Les éléments passent à la ligne si nécessaire */
+    gap: 10px;
+    justify-content: space-between;
+}
 
-    input, button {
-        padding: 10px;
-        border-radius: 5px;
-        border: none;
-        outline: none;
-        font-size: 1rem;
-        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-    }
+   input, button {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    width: 100%; /* Prend toute la largeur disponible */
+    margin-bottom: 10px; /* Ajoute un espace vertical entre les éléments */
+    box-sizing: border-box;
+}
+
     input {
         width: 100%;
         margin-bottom: 10px;
@@ -188,14 +202,14 @@
     .emoji:hover {
         transform: scale(1.2);
     }
-    #messages {
-        max-height: 300px;
-        overflow-y: auto;
-        padding: 10px;
-        background-color: #2e2e2e;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
+   #messages {
+    max-height: 50vh; /* Hauteur adaptative sur petits écrans */
+    overflow-y: auto; /* Ajoute un défilement vertical */
+    width: 100%; /* Occupe toute la largeur disponible */
+    margin: 0 auto;
+    box-sizing: border-box; /* Inclut les bordures et le padding dans la largeur */
+}
+
     .message {
         padding: 10px;
         margin-bottom: 8px;
@@ -350,33 +364,34 @@
     }
 
     /* Ajout de media queries pour adaptation aux tablettes */
-    @media (max-width: 600px) {
-        body {
-            padding: 10px;
-        }
-        #login-container, #chat-container {
-            width: 100%;
-            padding: 15px;
-        }
-        input, button {
-            font-size: 0.9rem;
-            padding: 8px;
-        }
-        #messages {
-            max-height: 50vh;
-        }
-        h1 {
-            font-size: 2em;
-        }
+  @media (max-width: 600px) {
+    body {
+        padding: 10px;
     }
-    @media (min-width: 600px) and (max-width: 900px) {
-        #login-container, #chat-container {
-            width: 80%;
-        }
-        h1 {
-            font-size: 2.5em;
-        }
+    h1 {
+        font-size: 2rem; /* Réduit la taille des titres */
     }
+    #messages {
+        max-height: 40vh; /* Réduit la hauteur des messages */
+    }
+    .message {
+        max-width: 90%; /* Adapte les messages à la largeur de l'écran */
+    }
+    button, input {
+        font-size: 0.9rem; /* Réduit la taille des textes */
+        padding: 8px;
+    }
+}
+@media (min-width: 600px) and (max-width: 900px) {
+    #login-container, #chat-container {
+        width: 80%; /* Réduit la largeur pour les tablettes */
+    }
+    h1 {
+        font-size: 2.5rem; /* Taille intermédiaire pour le titre */
+    }
+}
+
+
 </style>
 
 </head>
@@ -922,10 +937,11 @@ function toggleEmojiPickerMessage(key) {
         document.querySelector("button[onclick='toggleAllMessages()']").textContent = allMessagesVisible ? "Masquer tous" : "Afficher tous";
     }
 
-    function scrollToBottom() {
-        var messagesDiv = document.getElementById("messages");
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
+  function scrollToBottom() {
+    var messagesDiv = document.getElementById("messages");
+    messagesDiv.scrollTop = messagesDiv.scrollHeight; /* Positionne en bas de la liste des messages */
+}
+
         // Supprime l'utilisateur de Firebase
     window.addEventListener("beforeunload", function() {
     firebase.database().ref("users/" + username).remove();
