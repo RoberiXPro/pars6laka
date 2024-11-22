@@ -540,7 +540,6 @@ function updateUserStatusUI(user, status) {
     if (!userElement) {
         userElement = document.createElement("li");
         userElement.id = "user-status-" + user;
-        userElement.classList.add(status === "en ligne" ? "status-online" : "status-offline");
 
         const statusIndicator = document.createElement("span");
         statusIndicator.classList.add("status-indicator");
@@ -548,16 +547,15 @@ function updateUserStatusUI(user, status) {
 
         const userNameText = document.createElement("span");
         userNameText.classList.add("user-status");
-        userNameText.textContent = user + " - " + status;
         userElement.appendChild(userNameText);
 
         document.getElementById("online-users").appendChild(userElement);
-    } else {
-        userElement.classList.toggle("status-online", status === "en ligne");
-        userElement.classList.toggle("status-offline", status !== "en ligne");
-        userElement.querySelector(".user-status").textContent = user + " - " + status;
     }
+
+    userElement.className = status === "en ligne" ? "status-online" : "status-offline";
+    userElement.querySelector(".user-status").textContent = `${user} - ${status || "hors ligne"}`;
 }
+
     
 function removeUserFromUI(user) {
     const userElement = document.getElementById("user-status-" + user);
@@ -627,8 +625,9 @@ function loadMessages() {
 }
 
     //fonction pour les réactions dans les messages 
-    function addReactionEmoji(messageId, emoji) {
-    db.child("rooms/" + roomName + "/messages/" + messageId + "/reactions/" + username).set(emoji);
+   function addReactionEmoji(messageId, emoji) {
+    const reactionsRef = db.child("rooms/" + roomName + "/messages/" + messageId + "/reactions");
+    reactionsRef.child(username).set(emoji); // Met à jour ou ajoute la réaction
 }
 
     // Liste d'émojis de base
@@ -640,8 +639,10 @@ function loadMessages() {
     }
 function toggleIcons(messageId) {
     const messageDiv = document.getElementById(messageId);
-    messageDiv.classList.toggle('show-icons'); // Ajoute ou enlève la classe pour afficher les icônes
+    if (!messageDiv) return; // Vérifie que l'élément existe
+    messageDiv.classList.toggle('show-icons');
 }
+
 
     function loadEmojis() {
         const picker = document.getElementById("emoji-picker");
@@ -763,16 +764,19 @@ msgDiv.appendChild(toggleIconsBtn);
         }
     });
 // Cacher les émojis par défaut
-if (window.innerWidth <= 600) { // Mobile check
-    emojiPicker.style.display = "none";
+if (window.innerWidth <= 600) { // Mobile-specific behavior
+    const emojiPickers = document.querySelectorAll(".emoji-picker-message");
+    emojiPickers.forEach((picker) => {
+        picker.style.display = "none";
+    });
 }
 
        // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
-    function startDeletionTimer(msgDiv, key) {
-        setTimeout(function() {
-            deleteMessage(msgDiv, key); // Supprimer le message après 10 secondes
-        }, 10000); // 10 secondes
-    }
+  function startDeletionTimer(msgDiv, key) {
+    setTimeout(() => {
+        deleteMessage(msgDiv, key); // Supprime le message après 10 secondes
+    }, 10000); // Timer de 10 secondes
+}
 
     // Fonction de suppression du message
     function deleteMessage(msgDiv, key) {
@@ -785,11 +789,15 @@ if (window.innerWidth <= 600) { // Mobile check
 
    // L'événement pour démarrer la suppression après survol
 msgDiv.onmouseover = function() {
-    if (data.user !== username) { // Condition pour ne supprimer que les messages reçus
-        textSpan.classList.remove("flou"); // Annule l'effet flou
-        startDeletionTimer(msgDiv, key); // Démarre le compte à rebours pour supprimer le message après 10 secondes
+    if (data.user !== username) { // Ne pas supprimer les messages envoyés par l'utilisateur
+        textSpan.classList.remove("flou"); // Retirer le flou
+        if (!msgDiv.dataset.timerStarted) { // Vérifie si un timer est déjà en cours
+            msgDiv.dataset.timerStarted = true; // Empêche de démarrer plusieurs fois
+            startDeletionTimer(msgDiv, key); // Lance la suppression automatique
+        }
     }
 };
+
 
  // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
     msgDiv.onmouseleave = function() {
@@ -914,16 +922,19 @@ function toggleEmojiPickerMessage(key) {
         document.querySelector("button[onclick='toggleAllMessages()']").textContent = allMessagesVisible ? "Masquer tous" : "Afficher tous";
     }
 
-  function scrollToBottom() {
-    var messagesDiv = document.getElementById("messages");
-    messagesDiv.scrollTop = messagesDiv.scrollHeight; /* Positionne en bas de la liste des messages */
+ function scrollToBottom() {
+    const messagesDiv = document.getElementById("messages");
+    if (messagesDiv) {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
 }
+
 
         // Supprime l'utilisateur de Firebase
     window.addEventListener("beforeunload", function() {
     firebase.database().ref("users/" + username).remove();
 });
-    document.addEventListener("visibilitychange", function() {
+   document.addEventListener("visibilitychange", function() {
     if (document.visibilityState === 'visible') {
         // Réinitialiser l'icône de notification lorsque l'utilisateur consulte l'onglet
         const notification = document.getElementById("notification");
@@ -931,8 +942,14 @@ function toggleEmojiPickerMessage(key) {
 
         // Réinitialiser le titre de l'onglet si un nouveau message était arrivé
         document.title = 'Votre Chat';
+    } else {
+        // Cacher les emoji pickers si la page perd le focus
+        document.querySelectorAll(".emoji-picker-message").forEach(picker => {
+            picker.style.display = "none";
+        });
     }
 });
+
 
 </script>
 
