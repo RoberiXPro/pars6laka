@@ -361,7 +361,7 @@ action-buttons {
 <body>
 
     <div id="notification" class="notification">
-        ⚠️ATTENTION ! Les messages reçus se détruisent automatiquement après 10 secondes,<br> et ce, uniquement après leur lecture.⚠️
+        ⚠️ATTENTION ! Les messages reçus se détruisent automatiquement après 30 secondes,<br> et ce, uniquement après leur lecture.⚠️
     </div>
     <h1>🗨️TEST👻</h1>
     <!-- Section de connexion -->
@@ -718,7 +718,7 @@ function quitRoom() {
     usernameDiv.textContent = data.user;
 
     var textSpan = document.createElement("span");
-    textSpan.className = "msg-text flou";
+    textSpan.className = "msg-text flou"; // Message flouté par défaut
     textSpan.textContent = data.message;
 
     var timeDiv = document.createElement("div");
@@ -734,28 +734,27 @@ function quitRoom() {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
-// Bouton pour afficher/cacher les icônes
-const toggleIconsBtn = document.createElement("button");
-toggleIconsBtn.textContent = "⬇️"; // Flèche vers le bas
-toggleIconsBtn.className = "toggle-icons-btn";
-toggleIconsBtn.onclick = () => toggleIcons(key);
-msgDiv.appendChild(toggleIconsBtn);
+    // Bouton pour afficher/cacher les icônes
+    const toggleIconsBtn = document.createElement("button");
+    toggleIconsBtn.textContent = "⬇️"; // Flèche vers le bas
+    toggleIconsBtn.className = "toggle-icons-btn";
+    toggleIconsBtn.onclick = () => toggleIcons(key);
+    msgDiv.appendChild(toggleIconsBtn);
 
-       
     // Reaction container
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
     msgDiv.appendChild(reactionContainer);
 
-     // Correction du chemin Firebase pour les réactions
-    db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function(snapshot) {
+    // Correction du chemin Firebase pour les réactions
+    db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function (snapshot) {
         reactionContainer.innerHTML = ""; // Reset the content
         if (snapshot.exists()) {
             var reactionLabel = document.createElement("span");
             reactionLabel.className = "reaction-label";
             reactionLabel.textContent = "Réaction : ";
             reactionContainer.appendChild(reactionLabel);
-            snapshot.forEach(function(childSnapshot) {
+            snapshot.forEach(function (childSnapshot) {
                 const reactionEmoji = document.createElement("span");
                 reactionEmoji.className = "reaction-emoji";
                 reactionEmoji.textContent = childSnapshot.val();
@@ -763,19 +762,53 @@ msgDiv.appendChild(toggleIconsBtn);
             });
         }
     });
-// Cacher les émojis par défaut
-if (window.innerWidth <= 600) { // Mobile-specific behavior
-    const emojiPickers = document.querySelectorAll(".emoji-picker-message");
-    emojiPickers.forEach((picker) => {
-        picker.style.display = "none";
-    });
-}
 
+    // Gérer le flou et le défloutage
+    // PC: Défloutage au survol
+    msgDiv.addEventListener("mouseenter", () => {
+        if (window.innerWidth > 600) { // PC uniquement
+            textSpan.classList.remove("flou");
+        }
+    });
+
+    msgDiv.addEventListener("mouseleave", () => {
+        if (window.innerWidth > 600) { // PC uniquement
+            textSpan.classList.add("flou");
+        }
+    });
+
+    // Mobile: Défloutage au toucher
+    msgDiv.addEventListener("touchstart", () => {
+        if (window.innerWidth <= 600) { // Mobile uniquement
+            textSpan.classList.remove("flou");
+        }
+    });
+
+    msgDiv.addEventListener("touchend", () => {
+        if (window.innerWidth <= 600) { // Mobile uniquement
+            textSpan.classList.add("flou");
+        }
+    });
+
+    // Ajouter le message au conteneur
+    document.getElementById("messages").appendChild(msgDiv);
+
+    // Effet de flou initial
+    setTimeout(function () {
+        textSpan.classList.add("flou");
+    }, 15000);
+
+    // Notifications pour nouveaux messages
+    if (data.user !== username && document.visibilityState === 'hidden') {
+        document.title = '💬 Nouveau message!';
+        notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
+    }
+}
        // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
   function startDeletionTimer(msgDiv, key) {
     setTimeout(() => {
-        deleteMessage(msgDiv, key); // Supprime le message après 10 secondes
-    }, 10000); // Timer de 10 secondes
+        deleteMessage(msgDiv, key); // Supprime le message après 30 secondes
+    }, 30000); // Timer de 30 secondes
 }
 
     // Fonction de suppression du message
