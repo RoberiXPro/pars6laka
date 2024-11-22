@@ -182,7 +182,11 @@ button:hover {
     bottom: 60px;
     left: 20px;
 }
-
+.emoji {
+    cursor: pointer;
+    margin: 5px;
+    font-size: 1.2rem; /* Taille des émojis */
+}
 .emoji-btn {
     font-size: 1rem;
     width: 40px;
@@ -289,13 +293,16 @@ action-buttons {
 /* Emoji Picker pour chaque message */
 .emoji-picker-message {
     position: absolute;
-    top: -120px; /* Ajuste pour placer au-dessus */
+    top: -120px; /* Ajusté pour flotter au-dessus */
     right: 0;
     background: rgba(0, 0, 0, 0.9);
     padding: 10px;
     border-radius: 5px;
     display: none; /* Caché par défaut */
     z-index: 1000;
+    flex-wrap: wrap;
+    gap: 5px;
+    max-width: 200px; /* Limite la largeur */
 }
 
 /* Effet flou pour les messages */
@@ -820,23 +827,25 @@ msgDiv.onclick = function () {
 
 
     // Emoji picker (par message)
- const emojiPicker = document.createElement("div");
+const emojiPicker = document.createElement("div");
 emojiPicker.className = "emoji-picker-message";
 emojiPicker.id = `emoji-picker-${key}`;
 emojiPicker.style.position = "absolute";
-emojiPicker.style.top = "-120px"; // Ajusté pour placer au-dessus du message
+emojiPicker.style.top = "-120px"; // Place au-dessus du message
 emojiPicker.style.right = "0";
 emojiPicker.style.display = "none"; // Caché par défaut
 emojiPicker.style.background = "rgba(0, 0, 0, 0.9)";
 emojiPicker.style.padding = "10px";
 emojiPicker.style.borderRadius = "5px";
+emojiPicker.style.zIndex = "1000";
 
-// Boucle pour ajouter chaque emoji
 emojis.forEach((emoji) => {
     const emojiSpan = document.createElement("span");
     emojiSpan.textContent = emoji;
     emojiSpan.className = "emoji";
     emojiSpan.style.cursor = "pointer";
+    emojiSpan.style.margin = "5px";
+    emojiSpan.style.fontSize = "1.2rem"; // Taille des émojis
     emojiSpan.onclick = () => {
         addReactionEmoji(key, emoji); // Ajoute une réaction
         emojiPicker.style.display = "none"; // Masque après sélection
@@ -845,7 +854,6 @@ emojis.forEach((emoji) => {
 });
 
 msgDiv.appendChild(emojiPicker);
-
 
     // Gestion des réactions (Firebase)
     var reactionContainer = document.createElement("div");
@@ -947,14 +955,13 @@ msgDiv.appendChild(emojiPicker);
    
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
-    // Ferme tous les autres emoji pickers
+    console.log("Toggle emoji picker for message ID:", key); // Log pour test
     document.querySelectorAll(".emoji-picker-message").forEach((picker) => {
         if (picker.id !== `emoji-picker-${key}`) {
-            picker.style.display = "none";
+            picker.style.display = "none"; // Cache tous les autres
         }
     });
 
-    // Affiche ou masque l'emoji picker du message spécifique
     const picker = document.getElementById(`emoji-picker-${key}`);
     if (picker) {
         picker.style.display = picker.style.display === "flex" ? "none" : "flex";
