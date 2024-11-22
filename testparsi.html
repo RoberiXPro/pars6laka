@@ -288,18 +288,14 @@ action-buttons {
 }
 /* Emoji Picker pour chaque message */
 .emoji-picker-message {
-    display: none; /* Caché par défaut */
     position: absolute;
-    bottom: 25px;
-    right: 5px;
-    background-color: #333;
-    border-radius: 10px;
+    top: -120px; /* Ajuste pour placer au-dessus */
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
     padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-    max-width: 200px;
-    flex-wrap: wrap;
-    gap: 5px;
+    border-radius: 5px;
+    display: none; /* Caché par défaut */
+    z-index: 1000;
 }
 
 /* Effet flou pour les messages */
@@ -309,15 +305,15 @@ action-buttons {
 }
 /* Conteneur flottant pour les boutons */
 .action-buttons {
-    position: absolute; /* Position flottante */
-    bottom: -40px; /* En dessous du message */
-    right: 0; /* Aligné à droite */
-    display: none; /* Caché par défaut */
-    background: rgba(0, 0, 0, 0.8); /* Fond semi-transparent */
-    padding: 5px 10px;
-    border-radius: 10px;
-    z-index: 10;
-    gap: 8px;
+    position: absolute;
+    top: -40px; /* Boutons juste au-dessus du message */
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    padding: 5px;
 }
 
 /* Afficher les boutons au survol ou au clic */
@@ -674,11 +670,10 @@ function loadMessages() {
 }
 
     //fonction pour les réactions dans les messages 
-   function addReactionEmoji(messageId, emoji) {
+function addReactionEmoji(messageId, emoji) {
     const reactionsRef = db.child("rooms/" + roomName + "/messages/" + messageId + "/reactions");
     reactionsRef.child(username).set(emoji); // Met à jour ou ajoute la réaction
 }
-
     // Liste d'émojis de base
     const emojis = ["😀", "😂", "😍", "😎", "😊", "😢", "😡", "👍", "👎", "🎉", "❤️", "🔥"];
 
@@ -816,22 +811,26 @@ msgDiv.appendChild(actionButtons);
 emojiPicker.className = "emoji-picker-message";
 emojiPicker.id = `emoji-picker-${key}`;
 emojiPicker.style.position = "absolute";
-emojiPicker.style.bottom = "calc(100% + 10px)"; // Flottant au-dessus du cadre
+emojiPicker.style.top = "-120px"; // Ajusté pour placer au-dessus du message
 emojiPicker.style.right = "0";
+emojiPicker.style.display = "none"; // Caché par défaut
+emojiPicker.style.background = "rgba(0, 0, 0, 0.9)";
+emojiPicker.style.padding = "10px";
+emojiPicker.style.borderRadius = "5px";
 
 // Boucle pour ajouter chaque emoji
 emojis.forEach((emoji) => {
     const emojiSpan = document.createElement("span");
     emojiSpan.textContent = emoji;
     emojiSpan.className = "emoji";
+    emojiSpan.style.cursor = "pointer";
     emojiSpan.onclick = () => {
-        addReactionEmoji(key, emoji);
+        addReactionEmoji(key, emoji); // Ajoute une réaction
         emojiPicker.style.display = "none"; // Masque après sélection
     };
     emojiPicker.appendChild(emojiSpan);
 });
 
-// Ajout du picker au message
 msgDiv.appendChild(emojiPicker);
 
 
