@@ -2,22 +2,11 @@
 <html>
     <!-- Version mandeh, Version MOBILE status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
-    <title>GhoostMe - Room sécurisé</title>
-    
-    <!-- 1. Balise meta pour la gestion de la vue (viewport) -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-    <!-- 2. Inclure Firebase SDK (en premier car ton code en dépend) -->
+    <title>TEST - Room sécurisé</title>
+    <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-
-    <!-- 3. Inclure Emoji Mart CSS pour le style des émojis -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-mart/css/emoji-mart.css">
-
-    <!-- 4. Inclure Emoji Mart JavaScript (après le CSS) -->
-    <script src="https://cdn.jsdelivr.net/npm/emoji-mart"></script>
-
-    <!-- 5. Optionnel : si tu veux que d'autres fichiers CSS sont nécessaires, tu peux les ajouter ici -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
 <style>
  body {
@@ -181,28 +170,28 @@ button:hover {
 }
 
 #emoji-picker {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    max-width: 200px;
-    background-color: #333;
-    border-radius: 10px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(4, 1fr); /* 4 colonnes d'émojis */
+    max-height: 300px;
+    overflow-y: auto;
     padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: absolute;
-    bottom: 60px;
-    left: 20px;
+}
+
+    h3 {
+    color: #fff;
+    margin-top: 20px;
 }
 
 .emoji-btn {
-    font-size: 1rem;
+    font-size: 1.5rem;
     width: 40px;
     height: 40px;
-    padding: 5px;
-    border-radius: 50%;
-    background-color: transparent;
+    margin: 5px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
     color: #ffd700;
-    transition: transform 0.1s ease;
 }
 
 .emoji-btn:hover {
@@ -385,9 +374,9 @@ action-buttons {
 <body>
 
     <div id="notification" class="notification">
-        ⚠️ATTENTION !<br> Les messages reçus s'auto détruistent après 30 secondes,<br> après lecture.⚠️
+        ⚠️ATTENTION !<br> Les messages reçus s'auto détruistent après 120 secondes(2min),<br> après lecture.⚠️
     </div>
-    <h1>🗨️GHOOST👻</h1>
+    <h1>🗨️TEST👻</h1>
     <!-- Section de connexion -->
     <div id="login-container">
         <input type="text" id="username" placeholder="Ton pseudo" required><br>
@@ -420,10 +409,14 @@ action-buttons {
             <button onclick="toggleAllMessages()">Afficher tous</button>
             <button onclick="quitRoom()">Quitter</button>
         </div>
+<!-- Container d'emoji picker -->
 <div id="emoji-picker" style="display: none;">
-     <!-- On laisse ce div juste pour afficher l'emoji picker -->
+    <!-- Section des catégories -->
+    <div id="emoji-categories">
+        <!-- Chaque catégorie d'émojis sera affichée ici -->
+    </div>
 </div>
-    <div id="emoji-mart-picker"></div>
+
     </div>
 
     <!-- VERSION MANDEHA NY BOUTON SUPPRM, REPONDRE, EMOJI, FA REF MISUPPR DE PAS DES DEUX COTES -->
@@ -655,40 +648,51 @@ function loadMessages() {
     reactionsRef.child(username).set(emoji); // Met à jour ou ajoute la réaction
 }
 
-    // Liste d'émojis de base
-    const emojis = ["😀", "😂", "😍", "😎", "😊", "😢", "😡", "👍", "👎", "🎉", "❤️", "🔥"];
+   const emojiCategories = {
+    "Visages": ["😀", "😁", "😂", "🤣", "😃", "😄", "😅", "😆", "😇", "😊", "😍", "😘", "😗", "😙", "😚", "😋", "😜", "😝", "😛", "🤑", "🤓", "😎", "🤩", "🥳", "😏", "😬", "🙄", "🤯", "🥺", "😳", "🥰", "😈", "👿"],
+    "Animaux": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🦝", "🐯", "🦓", "🦄", "🐴", "🐮", "🐷", "🐸", "🐵", "🦧", "🐦", "🐧", "🦉", "🦋", "🐌", "🐞", "🦗", "🐜", "🐢"],
+    "Nature": ["🌳", "🌲", "🌵", "🌿", "🍃", "🌾", "🌸", "🌼", "🌻", "🌺", "🌹", "🥀", "🌷", "🍄", "🌰", "🍂", "🍁", "🌾", "🍃", "☘️", "🍀"],
+    "Aliments": ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🍈", "🍒", "🍍", "🥭", "🍑", "🍍", "🍅", "🍆", "🥒", "🥬", "🥔", "🍠", "🌽", "🌶️", "🥕"],
+    "Objets": ["💻", "🖥️", "📱", "📷", "📹", "🖨️", "📠", "⌨️", "💡", "🔋", "⚡", "🔌", "🖱️", "🖲️", "🧰", "🧳", "🧺", "🎒", "🎁", "📦", "🛍️", "💎"],
+    "Cœurs": ["❤️", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💘", "💝", "💖", "💗", "💓", "💕", "💞", "💌"],
+    "Fêtes et événements": ["🎉", "🎊", "🎁", "🎀", "🎈", "🥳", "🎶", "🎤", "🎧", "🎼", "🎵", "🎻", "🎷", "🥁", "🎺", "🎸", "🎹"],
+    "Main": ["👍", "👎", "👌", "✊", "👊", "🤛", "🤜", "🤚", "✋", "🤚", "👏", "🙌", "🙏", "💪", "🤲", "🤝", "👋", "🤗", "💅", "👀", "👂", "👄"],
+    "Climat et météorologie": ["🌞", "🌝", "🌛", "🌜", "☀️", "🌥️", "⛅", "🌦️", "🌧️", "🌨️", "❄️", "🌩️", "⚡", "🌪️", "🌫️", "💨", "🌬️", "🌈", "🌂"],
+    "Transport": ["🚗", "🚙", "🚌", "🚎", "🚓", "🚑", "🚒", "🚐", "🚚", "🚛", "🚜", "🏎️", "🚓", "🚆", "🚇", "🚂", "🚊", "🚉", "🚈", "🚁", "✈️", "🛳️", "🚢", "⛴️"],
+    "Sports": ["⚽", "🏀", "🏈", "⚾", "🎾", "🏐", "🏉", "🥏", "🎱", "🎳", "🏓", "🏸", "🥍", "🏒", "🏑", "⛸️", "🏑", "🛹", "🛼"],
+};
 
-function toggleEmojiPicker() {
+function loadEmojis() {
     const picker = document.getElementById("emoji-picker");
-    picker.style.display = picker.style.display === "none" ? "block" : "none";
-}
 
-function toggleIcons(messageId) {
+    Object.keys(emojiCategories).forEach(category => {
+        const categoryDiv = document.createElement("div");
+        const categoryTitle = document.createElement("h3");
+        categoryTitle.textContent = category;
+        categoryDiv.appendChild(categoryTitle);
+
+        emojiCategories[category].forEach(emoji => {
+            const emojiButton = document.createElement("button");
+            emojiButton.textContent = emoji;
+            emojiButton.classList.add("emoji-btn");
+            emojiButton.onclick = () => insertEmoji(emoji);
+            categoryDiv.appendChild(emojiButton);
+        });
+
+        picker.appendChild(categoryDiv);
+    });
+}
+    function toggleIcons(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return; // Vérifie que l'élément existe
     messageDiv.classList.toggle('show-icons');
 }
 
 
-    // Initialiser Emoji Mart
-// Initialiser Emoji Mart
-function loadEmojiMart() {
-    const picker = new EmojiMart.Picker({
-        onSelect: emoji => insertEmoji(emoji.native), // Ajouter l'émoji sélectionné
-        theme: 'dark', // Choisir un thème (light/dark)
-        set: 'apple' // Utiliser l'ensemble d'émojis Apple
-    });
-
-    // Ajoute l'emoji picker à la page
-    const emojiMartContainer = document.getElementById("emoji-mart-picker");
-    emojiMartContainer.innerHTML = ''; // Réinitialiser le contenu avant d'ajouter le picker
-    emojiMartContainer.appendChild(picker);
-}
-
-// Appeler la fonction pour charger le picker lorsque la page est prête
 document.addEventListener("DOMContentLoaded", function() {
-    loadEmojiMart();
+    loadEmojis();
 });
+
 
     document.addEventListener("keydown", function(event) {
         if (event.key === "Escape") {
@@ -707,10 +711,10 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function insertEmoji(emoji) {
-    const messageInput = document.getElementById("message-input");
-    messageInput.value += emoji; // Insérer l'émoji dans le champ de texte
-    document.getElementById("emoji-picker").style.display = "none"; // Fermer le picker
-}
+        const messageInput = document.getElementById("message-input");
+        messageInput.value += emoji;
+        document.getElementById("emoji-picker").style.display = "none";
+    }
 
     document.addEventListener("DOMContentLoaded", function() {
         loadEmojis();
@@ -807,8 +811,8 @@ if (window.innerWidth <= 600) { // Mobile-specific behavior
        // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
   function startDeletionTimer(msgDiv, key) {
     setTimeout(() => {
-        deleteMessage(msgDiv, key); // Supprime le message après 30 secondes
-    }, 30000); // Timer de 30 secondes
+        deleteMessage(msgDiv, key); // Supprime le message après 120 secondes
+    }, 120000); // Timer de 120 secondes
 }
 
     // Fonction de suppression du message
