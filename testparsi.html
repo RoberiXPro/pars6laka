@@ -3,13 +3,21 @@
     <!-- Version mandeh, Version MOBILE status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
     <title>GhoostMe - Room sécurisé</title>
-    <!-- Inclure Firebase SDK -->
+    
+    <!-- 1. Balise meta pour la gestion de la vue (viewport) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <!-- 2. Inclure Firebase SDK (en premier car ton code en dépend) -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/emoji-mart"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <!-- 3. Inclure Emoji Mart CSS pour le style des émojis -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-mart/css/emoji-mart.css">
 
+    <!-- 4. Inclure Emoji Mart JavaScript (après le CSS) -->
+    <script src="https://cdn.jsdelivr.net/npm/emoji-mart"></script>
+
+    <!-- 5. Optionnel : si tu veux que d'autres fichiers CSS sont nécessaires, tu peux les ajouter ici -->
 
 <style>
  body {
