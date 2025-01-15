@@ -374,7 +374,7 @@ action-buttons {
 <body>
 
     <div id="notification" class="notification">
-        ⚠️ATTENTION !<br> Les messages reçus s'auto détruistent après 30 secondes,<br> après lecture.⚠️
+        ⚠️ATTENTION !<br> Les messages reçus s'auto détruistent après 120 secondes(2min),<br> après lecture.⚠️
     </div>
     <h1>🗨️GHOOST👻</h1>
     <!-- Section de connexion -->
@@ -788,7 +788,7 @@ if (window.innerWidth <= 600) { // Mobile-specific behavior
   function startDeletionTimer(msgDiv, key) {
     setTimeout(() => {
         deleteMessage(msgDiv, key); // Supprime le message après 30 secondes
-    }, 30000); // Timer de 30 secondes
+    }, 120000); // Timer de 120 secondes
 }
 
     // Fonction de suppression du message
