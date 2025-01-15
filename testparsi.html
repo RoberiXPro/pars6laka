@@ -6,7 +6,10 @@
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emoji-mart"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-mart/css/emoji-mart.css">
+
 
 <style>
  body {
@@ -409,8 +412,8 @@ action-buttons {
             <button onclick="toggleAllMessages()">Afficher tous</button>
             <button onclick="quitRoom()">Quitter</button>
         </div>
-        <div id="emoji-picker" style="display: none;">
-    <!-- Emoji Picker Content -->
+<div id="emoji-picker" style="display: none;">
+  <div id="emoji-mart-picker"></div>
 </div>
     </div>
 
@@ -646,10 +649,11 @@ function loadMessages() {
     // Liste d'émojis de base
     const emojis = ["😀", "😂", "😍", "😎", "😊", "😢", "😡", "👍", "👎", "🎉", "❤️", "🔥"];
 
-    function toggleEmojiPicker() {
-        const picker = document.getElementById("emoji-picker");
-        picker.style.display = picker.style.display === "none" ? "flex" : "none";
-    }
+function toggleEmojiPicker() {
+    const picker = document.getElementById("emoji-picker");
+    picker.style.display = picker.style.display === "none" ? "block" : "none";
+}
+
 function toggleIcons(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return; // Vérifie que l'élément existe
@@ -657,18 +661,20 @@ function toggleIcons(messageId) {
 }
 
 
-    function loadEmojis() {
-        const picker = document.getElementById("emoji-picker");
-        emojis.forEach(emoji => {
-            const emojiSpan = document.createElement("span");
-            emojiSpan.textContent = emoji;
-            emojiSpan.className = "emoji";
-            emojiSpan.onclick = function() {
-                insertEmoji(emoji);
-            };
-            picker.appendChild(emojiSpan);
-        });
-    }
+    // Initialiser Emoji Mart
+function loadEmojiMart() {
+    const picker = new EmojiMart.Picker({
+        onSelect: emoji => insertEmoji(emoji.native), // Ajouter l'émoji sélectionné
+        theme: 'dark', // Choisir un thème (light/dark)
+        set: 'apple' // Utiliser l'ensemble d'émojis Apple
+    });
+    document.getElementById("emoji-mart-picker").appendChild(picker);
+}
+
+// Appeler la fonction pour charger le picker lorsque la page est prête
+document.addEventListener("DOMContentLoaded", function() {
+    loadEmojiMart();
+});
 
     document.addEventListener("keydown", function(event) {
         if (event.key === "Escape") {
@@ -687,10 +693,10 @@ function toggleIcons(messageId) {
     });
 
     function insertEmoji(emoji) {
-        const messageInput = document.getElementById("message-input");
-        messageInput.value += emoji;
-        document.getElementById("emoji-picker").style.display = "none";
-    }
+    const messageInput = document.getElementById("message-input");
+    messageInput.value += emoji; // Insérer l'émoji dans le champ de texte
+    document.getElementById("emoji-picker").style.display = "none"; // Fermer le picker
+}
 
     document.addEventListener("DOMContentLoaded", function() {
         loadEmojis();
