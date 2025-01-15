@@ -2,7 +2,7 @@
 <html>
     <!-- Version mandeh, Version MOBILE status en ligne, emoji picker rehetra, les boutons rehetras, suppression automatik après lecture, son notif, quitter qui actualise, -->
 <head>
-    <title>TEST Ghoost - Room sécurisé</title>
+    <title>GhoostMe - Room sécurisé</title>
     <!-- Inclure Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
@@ -182,11 +182,7 @@ button:hover {
     bottom: 60px;
     left: 20px;
 }
-.emoji {
-    cursor: pointer;
-    margin: 5px;
-    font-size: 1.2rem; /* Taille des émojis */
-}
+
 .emoji-btn {
     font-size: 1rem;
     width: 40px;
@@ -201,7 +197,10 @@ button:hover {
 .emoji-btn:hover {
     transform: scale(1.2);
 }
-
+/* Caché par défaut pour les icônes et boutons */
+.message .action-buttons {
+    display: none;
+}
 #messages {
     max-height: 50vh;
     overflow-y: auto;
@@ -287,22 +286,23 @@ action-buttons {
 .reaction-emoji {
     font-size: 1.2rem;
     margin-right: 5px;
-    cursor: pointer;
+    cursor: default;
     display: inline-block;
 }
 /* Emoji Picker pour chaque message */
 .emoji-picker-message {
-    position: absolute;
-    top: -120px; /* Ajusté pour flotter au-dessus */
-    right: 0;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 10px;
-    border-radius: 5px;
     display: none; /* Caché par défaut */
-    z-index: 1000;
+    position: absolute;
+    bottom: 25px;
+    right: 5px;
+    background-color: #333;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    max-width: 200px;
     flex-wrap: wrap;
     gap: 5px;
-    max-width: 200px; /* Limite la largeur */
 }
 
 /* Effet flou pour les messages */
@@ -310,51 +310,11 @@ action-buttons {
     filter: blur(4px); /* Applique un flou */
     transition: filter 0.3s ease; /* Transition douce */
 }
-/* Conteneur flottant pour les boutons */
-.action-buttons {
-    position: absolute;
-    top: -40px; /* Position au-dessus du message */
-    right: 10px;
-    display: none; /* Caché par défaut */
-    gap: 5px;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 5px;
-    padding: 5px;
-}
-
-.message:hover .action-buttons {
-    display: flex; /* Affiche les boutons au survol */
-}
-.message:focus-within .action-buttons {
-    display: flex;
-}
-
-/* Style des boutons */
-.action-buttons button {
-    font-size: 0.8rem;
-    color: white;
-    background: #444;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    padding: 5px;
-    transition: background-color 0.3s;
-}
-
-.action-buttons button:hover {
-    background: #555;
-}
 
 .message:hover .flou {
     filter: none; /* Retire le flou au survol */
 }
 
-/* Réorganiser les boutons en ligne */
-.action-buttons {
-    gap: 10px;
-    margin-top: 5px;
-}
 /* Media queries */
 @media (max-width: 600px) {
     #input-section {
@@ -414,9 +374,9 @@ action-buttons {
 <body>
 
     <div id="notification" class="notification">
-        ⚠️ATTENTION !<br> Les messages reçus se détruisent automatiquement après 10 secondes,<br> et ce, uniquement après leur lecture.⚠️
+        ⚠️ATTENTION !<br> Les messages reçus s'auto détruistent après 30 secondes,<br> après lecture.⚠️
     </div>
-    <h1>🗨️TEST👻</h1>
+    <h1>🗨️GHOOST👻</h1>
     <!-- Section de connexion -->
     <div id="login-container">
         <input type="text" id="username" placeholder="Ton pseudo" required><br>
@@ -678,10 +638,11 @@ function loadMessages() {
 }
 
     //fonction pour les réactions dans les messages 
-function addReactionEmoji(messageId, emoji) {
+   function addReactionEmoji(messageId, emoji) {
     const reactionsRef = db.child("rooms/" + roomName + "/messages/" + messageId + "/reactions");
     reactionsRef.child(username).set(emoji); // Met à jour ou ajoute la réaction
 }
+
     // Liste d'émojis de base
     const emojis = ["😀", "😂", "😍", "😎", "😊", "😢", "😡", "👍", "👎", "🎉", "❤️", "🔥"];
 
@@ -760,22 +721,19 @@ function quitRoom() {
     location.reload();
 }
 
- function displayMessage(key, data) {
+   function displayMessage(key, data) {
     var msgDiv = document.createElement("div");
     msgDiv.id = key;
     msgDiv.className = (data.user === username ? "message user1" : "message user2");
 
-    // Conteneur pour le nom d'utilisateur
     var usernameDiv = document.createElement("div");
     usernameDiv.className = "username " + (data.user === username ? "user1" : "user2");
     usernameDiv.textContent = data.user;
 
-    // Texte du message avec flou
     var textSpan = document.createElement("span");
     textSpan.className = "msg-text flou";
     textSpan.textContent = data.message;
 
-    // Timestamp du message
     var timeDiv = document.createElement("div");
     timeDiv.className = "timestamp";
     timeDiv.style.fontSize = "0.8rem";
@@ -789,79 +747,22 @@ function quitRoom() {
     msgDiv.appendChild(timeDiv);
     msgDiv.appendChild(textSpan);
 
-    // Conteneur pour les boutons d'action
-  var actionButtons = document.createElement("div");
-actionButtons.className = "action-buttons";
+// Bouton pour afficher/cacher les icônes
+const toggleIconsBtn = document.createElement("button");
+toggleIconsBtn.textContent = "⬇️"; // Flèche vers le bas
+toggleIconsBtn.className = "toggle-icons-btn";
+toggleIconsBtn.onclick = () => toggleIcons(key);
+msgDiv.appendChild(toggleIconsBtn);
 
-var emojiBtn = document.createElement("button");
-emojiBtn.textContent = "😀";
-emojiBtn.onclick = () => toggleEmojiPickerMessage(key);
-
-var replyBtn = document.createElement("button");
-replyBtn.textContent = "Répondre";
-replyBtn.onclick = () => prepareReply(key, data.message);
-
-var deleteBtn = document.createElement("button");
-deleteBtn.textContent = "Supprimer";
-deleteBtn.onclick = () => db.child("rooms/" + roomName + "/messages/" + key).remove();
-
-actionButtons.appendChild(emojiBtn);
-actionButtons.appendChild(replyBtn);
-actionButtons.appendChild(deleteBtn);
-
-// Ajout des boutons au message (flottants)
-msgDiv.style.position = "relative"; // Nécessaire pour le positionnement absolu
-msgDiv.appendChild(actionButtons);
-     
-msgDiv.onclick = function () {
-    // Ferme tous les autres boutons d'action
-    document.querySelectorAll(".action-buttons").forEach((buttons) => {
-        if (buttons !== actionButtons) {
-            buttons.style.display = "none";
-        }
-    });
-
-    // Affiche ou masque les boutons d'action du message actuel
-    actionButtons.style.display = actionButtons.style.display === "flex" ? "none" : "flex";
-};
-
-
-    // Emoji picker (par message)
-const emojiPicker = document.createElement("div");
-emojiPicker.className = "emoji-picker-message";
-emojiPicker.id = `emoji-picker-${key}`;
-emojiPicker.style.position = "absolute";
-emojiPicker.style.top = "-120px"; // Place au-dessus du message
-emojiPicker.style.right = "0";
-emojiPicker.style.display = "none"; // Caché par défaut
-emojiPicker.style.background = "rgba(0, 0, 0, 0.9)";
-emojiPicker.style.padding = "10px";
-emojiPicker.style.borderRadius = "5px";
-emojiPicker.style.zIndex = "1000";
-
-emojis.forEach((emoji) => {
-    const emojiSpan = document.createElement("span");
-    emojiSpan.textContent = emoji;
-    emojiSpan.className = "emoji";
-    emojiSpan.style.cursor = "pointer";
-    emojiSpan.style.margin = "5px";
-    emojiSpan.style.fontSize = "1.2rem"; // Taille des émojis
-    emojiSpan.onclick = () => {
-        addReactionEmoji(key, emoji); // Ajoute une réaction
-        emojiPicker.style.display = "none"; // Masque après sélection
-    };
-    emojiPicker.appendChild(emojiSpan);
-});
-
-msgDiv.appendChild(emojiPicker);
-
-    // Gestion des réactions (Firebase)
+       
+    // Reaction container
     var reactionContainer = document.createElement("div");
     reactionContainer.className = "reaction-container";
     msgDiv.appendChild(reactionContainer);
 
+     // Correction du chemin Firebase pour les réactions
     db.child("rooms/" + roomName + "/messages/" + key + "/reactions").on("value", function(snapshot) {
-        reactionContainer.innerHTML = ""; // Reset
+        reactionContainer.innerHTML = ""; // Reset the content
         if (snapshot.exists()) {
             var reactionLabel = document.createElement("span");
             reactionLabel.className = "reaction-label";
@@ -871,13 +772,51 @@ msgDiv.appendChild(emojiPicker);
                 const reactionEmoji = document.createElement("span");
                 reactionEmoji.className = "reaction-emoji";
                 reactionEmoji.textContent = childSnapshot.val();
-                reactionEmoji.title = `Réaction de ${childSnapshot.key}: ${childSnapshot.val()}`; // Ajoute l'info-bulle
                 reactionContainer.appendChild(reactionEmoji);
             });
         }
     });
+// Cacher les émojis par défaut
+if (window.innerWidth <= 600) { // Mobile-specific behavior
+    const emojiPickers = document.querySelectorAll(".emoji-picker-message");
+    emojiPickers.forEach((picker) => {
+        picker.style.display = "none";
+    });
+}
 
-    // Afficher les citations en cas de réponse
+       // Fonction pour démarrer un compte à rebours avant suppression (10 secondes)
+  function startDeletionTimer(msgDiv, key) {
+    setTimeout(() => {
+        deleteMessage(msgDiv, key); // Supprime le message après 30 secondes
+    }, 30000); // Timer de 30 secondes
+}
+
+    // Fonction de suppression du message
+    function deleteMessage(msgDiv, key) {
+        msgDiv.classList.add("fondu"); // Effet de fondu pour la suppression
+        setTimeout(function() {
+            msgDiv.remove(); // Suppression de l'élément du DOM
+            db.child("rooms/" + roomName + "/messages/" + key).remove(); // Suppression du message dans Firebase
+        }, 1000); // Délai pour l'animation visuelle de suppression (1 seconde)
+    }
+
+   // L'événement pour démarrer la suppression après survol
+msgDiv.onmouseover = function() {
+    if (data.user !== username) { // Ne pas supprimer les messages envoyés par l'utilisateur
+        textSpan.classList.remove("flou"); // Retirer le flou
+        if (!msgDiv.dataset.timerStarted) { // Vérifie si un timer est déjà en cours
+            msgDiv.dataset.timerStarted = true; // Empêche de démarrer plusieurs fois
+            startDeletionTimer(msgDiv, key); // Lance la suppression automatique
+        }
+    }
+};
+
+
+ // Réappliquer l'effet flou lorsqu'on quitte le message (optionnel)
+    msgDiv.onmouseleave = function() {
+        textSpan.classList.add("flou");
+    };
+
     if (data.replyTo) {
         var replyDiv = document.createElement("div");
         replyDiv.className = "citation flou";
@@ -893,59 +832,59 @@ msgDiv.appendChild(emojiPicker);
         }, 15000);
     }
 
-    // Suppression automatique après lecture
-    function startDeletionTimer(msgDiv, key) {
-        setTimeout(() => {
-            deleteMessage(msgDiv, key);
-        }, 10000); // 10 secondes
-    }
+   // Emoji picker
+    const emojiBtn = document.createElement("button");
+    emojiBtn.className = "emoji-btn";
+    emojiBtn.textContent = "😀";
+    emojiBtn.onclick = () => toggleEmojiPickerMessage(key);
+    msgDiv.appendChild(emojiBtn);
 
-    function deleteMessage(msgDiv, key) {
-        msgDiv.classList.add("fondu");
-        setTimeout(function() {
-            msgDiv.remove();
-            db.child("rooms/" + roomName + "/messages/" + key).remove();
-        }, 1000);
-    }
+    const emojiPicker = document.createElement("div");
+    emojiPicker.className = "emoji-picker-message";
+    emojiPicker.id = `emoji-picker-${key}`;
+    emojis.forEach((emoji) => {
+        const emojiSpan = document.createElement("span");
+        emojiSpan.textContent = emoji;
+        emojiSpan.className = "emoji";
+        emojiSpan.onclick = () => {
+            addReactionEmoji(key, emoji);
+            emojiPicker.style.display = "none"; // Masque après sélection
+        };
+        emojiPicker.appendChild(emojiSpan);
+    });
+    msgDiv.appendChild(emojiPicker);
 
-    msgDiv.onmouseover = function() {
-        if (data.user !== username) { // Ne pas supprimer les messages de l'utilisateur
-            textSpan.classList.remove("flou");
-            if (!msgDiv.dataset.timerStarted) {
-                msgDiv.dataset.timerStarted = true;
-                startDeletionTimer(msgDiv, key);
-            }
-        }
+    var actionButtons = document.createElement("div");
+    actionButtons.className = "action-buttons";
+
+    var replyBtn = document.createElement("button");
+    replyBtn.textContent = "Répondre";
+    replyBtn.className = "reply-btn";
+    replyBtn.onclick = function() {
+        prepareReply(key, data.message);
     };
 
-    msgDiv.onmouseleave = function() {
-        textSpan.classList.add("flou");
+    var deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Supprimer";
+    deleteBtn.className = "btn-delete";
+    deleteBtn.onclick = function() {
+        db.child("rooms/" + roomName + "/messages/" + key).remove();
     };
 
-        // Ajout des boutons d'action au message
-    actionButtons.style.display = "none"; // Caché par défaut
+    actionButtons.appendChild(replyBtn);
+    actionButtons.appendChild(deleteBtn);
     msgDiv.appendChild(actionButtons);
-    // Affichage ou masquage des boutons au clic (mobile-friendly)
-    msgDiv.onclick = function () {
-        document.querySelectorAll(".action-buttons").forEach((buttons) => {
-            if (buttons !== actionButtons) {
-                buttons.style.display = "none";
-            }
-        });
-        actionButtons.style.display = actionButtons.style.display === "flex" ? "none" : "flex";
-    };
 
-    // Ajout du message au conteneur principal
     document.getElementById("messages").appendChild(msgDiv);
 
-    // Effet de flou et affichage des messages
+    // Effet de flou et affichage au survol
     setTimeout(function() {
         textSpan.classList.add("flou");
     }, 15000);
 
     scrollToBottom();
 
-    // Notification sonore pour nouveaux messages
+    // Notifications pour nouveaux messages
     if (data.user !== username && document.visibilityState === 'hidden') {
         document.title = '💬 Nouveau message!';
         notificationSound.play().catch(error => console.log("Erreur de lecture de la notification sonore :", error));
@@ -955,13 +894,14 @@ msgDiv.appendChild(emojiPicker);
    
 // Fonction toggleEmojiPickerMessage pour afficher/masquer l'emoji picker spécifique à chaque message
 function toggleEmojiPickerMessage(key) {
-    console.log("Toggle emoji picker for message ID:", key); // Log pour test
+    // Ferme tous les autres emoji pickers
     document.querySelectorAll(".emoji-picker-message").forEach((picker) => {
         if (picker.id !== `emoji-picker-${key}`) {
-            picker.style.display = "none"; // Cache tous les autres
+            picker.style.display = "none";
         }
     });
 
+    // Affiche ou masque l'emoji picker du message spécifique
     const picker = document.getElementById(`emoji-picker-${key}`);
     if (picker) {
         picker.style.display = picker.style.display === "flex" ? "none" : "flex";
@@ -1022,7 +962,6 @@ function toggleEmojiPickerMessage(key) {
         });
     }
 });
-
 
 </script>
 
