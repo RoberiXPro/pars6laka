@@ -964,7 +964,7 @@ function setOnlineStatus() {
     firebase.database().ref(".info/connected").on("value", function(snapshot) {
         if (snapshot.val() === true) {
             userRef.set({
-                status: "",
+                status: "en ligne",
                 lastSeen: new Date().toISOString()
             });
             userRef.onDisconnect().remove();
