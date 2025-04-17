@@ -1194,16 +1194,20 @@ function quitRoom() {
 content.className = "msg-text";
 
 if (data.user !== username) {
-  content.classList.add("flou");
+content.classList.add("flou"); // flou activé pour TOUS les messages
 
-  msgDiv.addEventListener("mouseenter", function () {
-    content.classList.remove("flou");
-    if (!msgDiv.dataset.timerStarted) {
-      msgDiv.dataset.timerStarted = "true";
-      startDeletionTimer(msgDiv, key);
-    }
-  });
-}
+msgDiv.addEventListener("mouseenter", () => {
+  content.classList.remove("flou");
+  if (data.user !== username && !msgDiv.dataset.timerStarted) {
+    msgDiv.dataset.timerStarted = "true";
+    startDeletionTimer(msgDiv, key);
+  }
+});
+
+msgDiv.addEventListener("mouseleave", () => {
+  content.classList.add("flou");
+});
+
   const urlRegex = /(https?:\/\/[^\s]+)/gi;
   const msg = (data.message || "").replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:#ffd700">${url}</a>`);
   content.innerHTML = msg;
@@ -1640,6 +1644,9 @@ function activateStealth() {
 function quitStealthSafely() {
   window.location.href = "https://www.google.com";
 }
+document.addEventListener("mouseleave", () => {
+  document.querySelectorAll('.msg-text').forEach(el => el.classList.add('flou'));
+});
 
 </script>
 
