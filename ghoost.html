@@ -744,7 +744,7 @@ min-height: 120px;
   </select>
 </div>
 <div id="user-list">
-        <h2>Utilisateurs connectés</h2>
+        <h2>EN LIGNE</h2>
         <ul id="online-users">
             <!-- Les utilisateurs et leur statut seront ajoutés ici -->
         </ul>
@@ -964,7 +964,7 @@ function setOnlineStatus() {
     firebase.database().ref(".info/connected").on("value", function(snapshot) {
         if (snapshot.val() === true) {
             userRef.set({
-                status: "en ligne",
+                status: "",
                 lastSeen: new Date().toISOString()
             });
             userRef.onDisconnect().remove();
