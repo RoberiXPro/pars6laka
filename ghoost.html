@@ -890,7 +890,7 @@ min-height: 120px;
 </style>
 </head>
 <body>
-   <div id="login-container">
+  <div id="login-container">
     <h1>🗨️GHOOST👻</h1>
     <div class="login-card">
       <h2 class="login-title">Connexion</h2>
@@ -910,96 +910,91 @@ min-height: 120px;
     </div>
   </div>
 
-    <!-- Section de chat -->
- <div class="container container-chat">  
+  <!-- Section de chat -->
+  <div class="container container-chat">
     <div id="chat-container">
-        <div id="room-name-display" style="font-size: 1.5em; font-weight: bold; color: #ffd700; margin-bottom: 10px;"></div>
-        <!-- Sélecteur de thème -->
-<div id="theme-selector" style="text-align: right; margin-bottom: 10px;">
-  <label for="theme-select" style="margin-right: 8px; color: var(--text-color); font-size: 0.9rem;">
-    🎨 Thème :
-  </label>
-  <select id="theme-select" style="padding: 6px 10px; border-radius: 8px; background-color: #444; color: #ffd700; border: 1px solid #888;">
-    <option value="default">Sombre</option>
-    <option value="ocean">Océan</option>
-    <option value="forest">Forêt</option>
-    <option value="rosewood">Rosewood</option>
-<option value="rosewood">Amour</option>
-<option value="noir">Nuit discrète</option>
-<option value="midnight">Minuit</option>
-<option value="sepia">Sépia</option>
-<option value="galaxy">Galaxie</option>
+      <div id="room-name-display" class="room-title"></div>
 
-  </select>
-</div>
-<div id="user-list">
-        <h2>EN LIGNE</h2>
-        <ul id="online-users">
-            <!-- Les utilisateurs et leur statut seront ajoutés ici -->
-        </ul>
-    </div>
-        <!-- Section pour répondre à un message -->
-        <div id="reply-container">
-            <span id="reply-message"></span>
-            <button onclick="cancelReply()" style="float: right; background-color: #e74c3c; color: white; border: none; border-radius: 5px; padding: 5px;">Annuler</button>
-        </div>
+      <!-- Sélecteur de thème -->
+      <div id="theme-selector" class="theme-selector">
+        <button id="theme-toggle" class="theme-toggle">🌙</button>
+        <label for="theme-select" class="theme-label">🎨 Thème :</label>
+        <select id="theme-select" class="theme-select">
+          <option value="default">Sombre</option>
+          <option value="ocean">Océan</option>
+          <option value="forest">Forêt</option>
+          <option value="rosewood">Rosewood</option>
+          <option value="rosewood">Amour</option>
+          <option value="noir">Nuit discrète</option>
+          <option value="midnight">Minuit</option>
+          <option value="sepia">Sépia</option>
+          <option value="galaxy">Galaxie</option>
+        </select>
+      </div>
 
-        <div id="messages"></div>
-<div id="audio-preview" style="display:none; margin-top:10px;">
-  <audio id="audio-player" controls></audio>
-  <br>
-  <button onclick="uploadAudio()">✅ Envoyer le vocal</button>
-  <button onclick="cancelAudio()" style="background-color: #e74c3c; color: white;">❌ Annuler</button>
-</div>
+      <div id="user-list">
+        <h2>En ligne</h2>
+        <ul id="online-users"></ul>
+      </div>
 
-<div id="input-section">
-  <button class="icon-button" onclick="toggleEmojiPicker()" title="Emoji">
-    <svg viewBox="0 0 24 24"><path d="M12 22C6.48 22 2 17.52 2 12s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-4a6 6 0 006-6H6a6 6 0 006 6z"/></svg>
-  </button>
-  <input type="text" id="message-input" placeholder="Écrivez un message">
-  <button class="icon-button" onclick="sendMessage()" title="Envoyer">
-    <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
-  </button>
-  <button class="icon-button" onclick="toggleRecording()" id="record-btn" title="Audio">
-    <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm6-3a6 6 0 01-12 0H4a8 8 0 0016 0h-2zm-6 8c2.21 0 4-1.79 4-4h-2a2 2 0 01-4 0H8c0 2.21 1.79 4 4 4z"/></svg>
-  </button>
-  <input type="file" id="image-input" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
-  <button class="icon-button" onclick="document.getElementById('image-input').click()" title="Image">
-    <svg viewBox="0 0 24 24"><path d="M21 19V5H3v14h18zm-2-2H5V7h14v10z"/></svg>
-  </button>
-   <button class="icon-button" onclick="quitRoom()" title="Quitter">
-    <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59z"/></svg>
-  </button>
+      <div id="reply-container" class="reply-container">
+        <span id="reply-message"></span>
+        <button onclick="cancelReply()" class="reply-cancel">Annuler</button>
+      </div>
 
-</div>
+      <div id="messages"></div>
 
+      <div id="audio-preview" class="audio-preview">
+        <audio id="audio-player" controls></audio>
+        <br>
+        <button onclick="uploadAudio()">✅ Envoyer le vocal</button>
+        <button onclick="cancelAudio()" class="cancel-audio">❌ Annuler</button>
+      </div>
 
-        <div id="emoji-picker" style="display: none;">
-    <!-- Emoji Picker Content -->
-</div>
-    </div>
-     <!-- ✅ Écran de camouflage -->
-<div id="stealth-screen" style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #111; position: fixed; top: 0; left: 0; width: 100%; z-index: 99999;">
-  <p style="color:#ccc; font-size:1.2em;">Résous : 9 x 2548 + 236</p>
-  <input id="stealth-code" placeholder="Tape ici" style="padding:10px; border-radius:6px; border:none; font-size:1rem; margin-bottom: 10px;">
-  <button onclick="quitStealthSafely()" style="padding:10px 20px; background-color:#555; color:#fff; border:none; border-radius:6px; font-size:1rem;">Quitter discrètement</button>
-</div>
+      <div id="input-section">
+        <button class="icon-button" onclick="toggleEmojiPicker()" title="Emoji">
+          <svg viewBox="0 0 24 24"><path d="M12 22C6.48 22 2 17.52 2 12s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-4a6 6 0 006-6H6a6 6 0 006 6z"/></svg>
+        </button>
+        <input type="text" id="message-input" placeholder="Écrivez un message">
+        <button class="icon-button" onclick="sendMessage()" title="Envoyer">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+        <button class="icon-button" onclick="toggleRecording()" id="record-btn" title="Audio">
+          <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm6-3a6 6 0 01-12 0H4a8 8 0 0016 0h-2zm-6 8c2.21 0 4-1.79 4-4h-2a2 2 0 01-4 0H8c0 2.21 1.79 4 4 4z"/></svg>
+        </button>
+        <input type="file" id="image-input" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
+        <button class="icon-button" onclick="document.getElementById('image-input').click()" title="Image">
+          <svg viewBox="0 0 24 24"><path d="M21 19V5H3v14h18zm-2-2H5V7h14v10z"/></svg>
+        </button>
+        <button class="icon-button" onclick="quitRoom()" title="Quitter">
+          <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59z"/></svg>
+        </button>
+      </div>
 
-
-<div id="image-popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; z-index:9999;">
-  <div id="popup-inner" style="position: relative;">
-    <img id="popup-img" style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px #000;" />
-    <button id="close-popup-btn" style="position:absolute; top:-20px; right:-20px; background:#e74c3c; color:white; border:none; font-size:1.5rem; padding:5px 10px; border-radius:50%; cursor:pointer;">✖</button>
+      <div id="emoji-picker"></div>
+<div id="image-popup" class="image-popup">
+  <div id="popup-inner" class="popup-inner">
+    <img id="popup-img" class="popup-img" />
+    <button id="close-popup-btn" class="close-popup-btn">✖</button>
   </div>
 </div>
-     </div>
-<!-- ✅ Boutons Panic & Camouflage (coin bas droite, fixés) -->
-<div style="position: fixed; bottom: 10px; right: 10px; display: flex; gap: 10px; z-index: 9999;">
-  <button class="icon-button danger-button" onclick="panicWipe()" title="Panic">🧨</button>
-  <button class="icon-button stealth-button" onclick="activateStealth()" title="Camouflage">🕶️</button>
-</div>
+    </div>
+
+    <!-- Camouflage ne sert à rien  -->
+    <div id="stealth-screen" class="stealth-screen">
+      <p class="stealth-question">Résous : 9 x 2548 + 236</p>
+      <input id="stealth-code" class="stealth-input" placeholder="Tape ici">
+      <button onclick="quitStealthSafely()" class="stealth-quit">Quitter discrètement</button>
+    </div>
+  </div>
+
+  <!-- Boutons flottants -->
+  <div class="floating-buttons">
+    <button class="icon-button danger-button" onclick="panicWipe()" title="Panic">🧨</button>
+    <button class="icon-button stealth-button" onclick="activateStealth()" title="Camouflage">🕶️</button>
+  </div>
 <script>
-    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3');
+    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
     var firebaseConfig = {
         apiKey: "AIzaSyAN7IrOQfHYJAeO49I1EZxDfupv62Ew9XI",
         authDomain: "madiko-rs.firebaseapp.com",
@@ -1046,7 +1041,7 @@ function joinRoom() {
 
   userCheckRef.once("value").then(snapshot => {
     if (snapshot.exists()) {
-      alert("Ce pseudo est déjà utilisé dans cette villa !");
+      alert("Ce pseudo est déjà utilisé dans cette lieu !");
       return;
     }
 
@@ -1056,7 +1051,7 @@ function joinRoom() {
       if (snapshot.exists()) {
         var dbPassword = snapshot.child("password").val();
 if (dbPassword === password) {
-  document.getElementById("room-name-display").textContent = "Villa : " + roomName;
+  document.getElementById("room-name-display").textContent = "Lieu : " + roomName;
   switchToChat();
   initializeUserListeners();
   setOnlineStatus();
@@ -1071,7 +1066,7 @@ db.set({
   password: password,
   messages: {}
 }).then(() => {
-  document.getElementById("room-name-display").textContent = "Villa : " + roomName;
+  document.getElementById("room-name-display").textContent = "Lieu : " + roomName;
   switchToChat();
   initializeUserListeners();
   setOnlineStatus();
