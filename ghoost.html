@@ -16,6 +16,7 @@
   --button-bg: #5a5a5a;
   --button-hover-bg: #4c4c4c;
   --button-shadow: rgba(255, 215, 0, 0.25); /* pour le neon */
+  --transition: all 0.5s ease;
 }
 
  body {
@@ -36,6 +37,20 @@
     transform: translateX(-50%);
     bottom: 60px;
   }
+}
+.theme-toggle {
+  margin-left: 10px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background-color: var(--button-bg);
+  color: var(--accent-color);
+  border: 1px solid #888;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  background-color: var(--button-hover-bg);
 }
 
   #message-input {
@@ -368,19 +383,21 @@ min-height: 120px;
 }
 
 
-    .message {
-      display: flex;
-      flex-direction: column;
-      max-width: 75%;
-    min-width: 140px; /* ✅ largeur minimale */
-      padding: 12px 16px;
-      margin: 8px 0;
-      border-radius: 18px;
-      word-break: break-word;
-      position: relative;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-      animation: fadeInUp 0.3s ease;
-    }
+.message {
+  display: flex;
+  flex-direction: column;
+  max-width: 75%;
+  min-width: 140px; /* ✅ largeur minimale */
+  padding: 12px 16px;
+  padding-bottom: 26px; /* 🟡 espace réservé pour la coche "vu" */
+  margin: 8px 0;
+  border-radius: 18px;
+  word-break: break-word;
+  position: relative; /* ✅ permet à la coche d’être positionnée à l’intérieur */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease;
+}
+
 
     .message.user1 {
       align-self: flex-end;
@@ -697,6 +714,178 @@ min-height: 120px;
   opacity: 1;
   background-color: #222;
 }
+/*bloc css des style injecter dans html recemment*/
+.room-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 10px;
+}
+
+.theme-selector {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.theme-label {
+  margin-right: 8px;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.theme-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: #444;
+  color: #ffd700;
+  border: 1px solid #888;
+}
+
+.reply-container {
+  display: none;
+  background-color: #444;
+  padding: 5px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.btn-cancel-reply {
+  float: right;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.audio-preview {
+  display: none;
+  margin-top: 10px;
+}
+
+.cancel-audio {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.stealth-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #111;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99999;
+}
+
+.stealth-question {
+  color: #ccc;
+  font-size: 1.2em;
+}
+
+.stealth-input {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.stealth-quit {
+  padding: 10px 20px;
+  background-color: #555;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.image-popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup-inner {
+  position: relative;
+}
+
+.popup-img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #000;
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+.image-popup[style*="display: flex"] .popup-img {
+  transform: scale(1);
+}
+
+.close-popup-btn {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  padding: 5px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.floating-buttons {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+  z-index: 9999;
+}
+.emoji-picker-hidden {
+  display: none;
+}
+ /* message vu */
+.seen-check {
+  position: absolute;
+  bottom: 6px;
+  right: 12px;
+  opacity: 0.75;
+  width: 18px;
+  height: 18px;
+  pointer-events: none; /* ✅ évite qu'on clique dessus par erreur */
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+}
+.seen-check svg {
+  width: 100%;
+  height: 100%;
+  stroke: #00ff88; /* ou #ffd700 pour doré */
+}
 
 </style>
 </head>
@@ -810,7 +999,7 @@ min-height: 120px;
   <button class="icon-button stealth-button" onclick="activateStealth()" title="Camouflage">🕶️</button>
 </div>
 <script>
-    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2356/2356-preview.mp3');
+    const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3');
     var firebaseConfig = {
         apiKey: "AIzaSyAN7IrOQfHYJAeO49I1EZxDfupv62Ew9XI",
         authDomain: "madiko-rs.firebaseapp.com",
@@ -841,25 +1030,6 @@ min-height: 120px;
         notification.style.display = "none";
       }, 5000);
     }
-//afaka atao entrée refa mi connecte
-document.addEventListener("DOMContentLoaded", function () {
-  showNotification();
-
-  const loginContainer = document.getElementById("login-container");
-  if (loginContainer) {
-    loginContainer.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        const loginBtn = document.querySelector(".login-button");
-        if (loginBtn) loginBtn.click();
-      }
-    });
-  }
-
-  // ✅ Ici : assignation du clic du bouton
-  const loginBtn = document.querySelector(".login-button");
-  if (loginBtn) loginBtn.onclick = joinRoom;
-});
-
    
 function joinRoom() {
   username = document.getElementById("username").value;
@@ -876,7 +1046,7 @@ function joinRoom() {
 
   userCheckRef.once("value").then(snapshot => {
     if (snapshot.exists()) {
-      alert("Ce pseudo est déjà utilisé dans ce lieu !");
+      alert("Ce pseudo est déjà utilisé dans cette villa !");
       return;
     }
 
@@ -886,7 +1056,7 @@ function joinRoom() {
       if (snapshot.exists()) {
         var dbPassword = snapshot.child("password").val();
 if (dbPassword === password) {
-  document.getElementById("room-name-display").textContent = "Lieu : " + roomName;
+  document.getElementById("room-name-display").textContent = "Villa : " + roomName;
   switchToChat();
   initializeUserListeners();
   setOnlineStatus();
@@ -901,7 +1071,7 @@ db.set({
   password: password,
   messages: {}
 }).then(() => {
-  document.getElementById("room-name-display").textContent = "Lieu : " + roomName;
+  document.getElementById("room-name-display").textContent = "Villa : " + roomName;
   switchToChat();
   initializeUserListeners();
   setOnlineStatus();
@@ -1045,26 +1215,44 @@ function sendMessage() {
 
 
 var childRemovedListenerSet = false;
-
+//message vu ajouté ici
 function loadMessages() {
-    if (!messageListener) {
-        messageListener = function(snapshot) {
-            displayMessage(snapshot.key, snapshot.val());
-        };
-        db.child("messages").on("child_added", messageListener);
-    }
+  if (!messageListener) {
+    messageListener = function(snapshot) {
+      displayMessage(snapshot.key, snapshot.val());
+    };
+    db.child("messages").on("child_added", messageListener);
+  }
 
-    if (!childRemovedListenerSet) {
-        db.child("messages").on("child_removed", function(snapshot) {
-            const removedMessage = document.getElementById(snapshot.key);
-            if (removedMessage) {
-                removedMessage.remove();
-                console.log("Message supprimé de l'interface après suppression dans Firebase.");
-            }
-        });
-        childRemovedListenerSet = true;
+  if (!childRemovedListenerSet) {
+    db.child("messages").on("child_removed", function(snapshot) {
+      const removedMessage = document.getElementById(snapshot.key);
+      if (removedMessage) {
+        removedMessage.remove();
+        console.log("Message supprimé de l'interface après suppression dans Firebase.");
+      }
+    });
+    childRemovedListenerSet = true;
+  }
+
+  // ✅ Ajoute ce bloc pour mettre à jour le DOM si le message est "vu"
+  db.child("messages").on("child_changed", function(snapshot) {
+    const key = snapshot.key;
+    const data = snapshot.val();
+    const msgDiv = document.getElementById(key);
+
+    if (msgDiv && data.seen && data.user === username) {
+      // Vérifie si le ✓✓ n'est pas déjà là
+      if (!msgDiv.querySelector(".seen-check")) {
+        const seenCheck = document.createElement("span");
+        seenCheck.className = "seen-check";
+        seenCheck.textContent = "✓";
+        msgDiv.appendChild(seenCheck);
+      }
     }
+  });
 }
+
    
     //fonction pour les réactions dans les messages 
     function addReactionEmoji(messageId, emoji) {
@@ -1136,17 +1324,7 @@ document.addEventListener("click", function(event) {
         }
     });
 
-     document.addEventListener("DOMContentLoaded", function() {
-        loadEmojis();
-
-        document.getElementById("message-input").addEventListener("keydown", function(event) {
-            if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        });
-    });
-//Bouton Quitter
+    //Bouton Quitter
 function quitRoom() {
     // Supprime l'utilisateur de Firebase
     firebase.database().ref("users/" + username).remove();
@@ -1284,6 +1462,8 @@ if (data.user === username) {
 
 actions.appendChild(btnGroup);     // ✅ Affiche le groupe dans actions
 msgDiv.appendChild(actions);       // ✅ Affiche tout dans le message
+//message vu
+       updateSeenStatus(msgDiv, data, key); // ✅ C’est ce qui déclenche l’apparition de la coche
 
        document.getElementById("messages").appendChild(msgDiv);
       scrollToBottom();
@@ -1297,7 +1477,7 @@ function startDeletionTimer(msgDiv, key) {
   msgDiv.classList.add("deletion-pending");
     setTimeout(() => {
     deleteMessage(msgDiv, key);
-  }, 120000); // 2 minutes
+  }, 600000); // 10 minutes
 }
 
 function deleteMessage(msgDiv, key) {
@@ -1365,53 +1545,65 @@ let microAccessGranted = false;
 function toggleRecording() {
     const recordBtn = document.getElementById('record-btn');
 
-    // ✅ Bloquer si on a déjà tenté et refusé l’accès
     if (!microAccessGranted && !mediaRecorder) {
         navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
             microAccessGranted = true;
-
-            mediaRecorder = new MediaRecorder(stream);
-            audioChunks = [];
-
-            mediaRecorder.ondataavailable = event => {
-                audioChunks.push(event.data);
-            };
-
-            mediaRecorder.onstop = () => {
-                recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                const audioURL = URL.createObjectURL(recordedBlob);
-
-                document.getElementById('audio-player').src = audioURL;
-                document.getElementById('audio-preview').style.display = "block";
-
-                // ✅ Remettre l’icône SVG moderne
-                recordBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm6-3a6 6 0 01-12 0H4a8 8 0 0016 0h-2zm-6 8c2.21 0 4-1.79 4-4h-2a2 2 0 01-4 0H8c0 2.21 1.79 4 4 4z"/></svg>`;
-                recordBtn.classList.remove("recording");
-            };
-
-            // Démarre immédiatement après autorisation
-            mediaRecorder.start();
-            recordBtn.innerHTML = "⏹️ Stop";
-            recordBtn.classList.add("recording");
-
-            // 🔴 Stop après 30s si pas fait manuellement
-            setTimeout(() => {
-                if (mediaRecorder && mediaRecorder.state === "recording") {
-                    mediaRecorder.stop();
-                    alert("Durée maximale atteinte (30s)");
-                }
-            }, 30000);
-
+            startRecording(stream, recordBtn);
         }).catch(error => {
             console.error("Erreur micro :", error);
             alert("Erreur : accès au micro refusé !");
         });
-
     } else if (mediaRecorder && mediaRecorder.state === "recording") {
         mediaRecorder.stop();
+    } else {
+        // ✅ Re-demande le micro et recommence un nouvel enregistrement
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+            startRecording(stream, recordBtn);
+        }).catch(error => {
+            console.error("Erreur lors de la reprise de l’enregistrement :", error);
+            alert("Impossible de relancer l’enregistrement.");
+        });
     }
 }
 
+function startRecording(stream, recordBtn) {
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+    };
+
+    mediaRecorder.onstop = () => {
+        recordedBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const audioURL = URL.createObjectURL(recordedBlob);
+
+        document.getElementById('audio-player').src = audioURL;
+        document.getElementById('audio-preview').style.display = "block";
+
+        // Remet le bouton à l’état initial
+        recordBtn.innerHTML = `
+            <svg viewBox="0 0 24 24">
+                <path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm6-3a6 6 0 01-12 0H4a8 8 0 0016 0h-2zm-6 8c2.21 0 4-1.79 4-4h-2a2 2 0 01-4 0H8c0 2.21 1.79 4 4 4z"/>
+            </svg>`;
+        recordBtn.classList.remove("recording");
+
+        // 🔁 Reset pour pouvoir relancer un autre enregistrement
+        mediaRecorder = null;
+    };
+
+    // Lancement
+    mediaRecorder.start();
+    recordBtn.innerHTML = "⏹️ Stop";
+    recordBtn.classList.add("recording");
+
+    setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            alert("Durée maximale atteinte (30s)");
+        }
+    }, 30000);
+}
 
 function uploadAudio() {
     if (!recordedBlob) {
@@ -1442,8 +1634,6 @@ function uploadAudio() {
         document.getElementById('audio-preview').style.display = "none";
         document.getElementById('audio-player').src = "";
         recordedBlob = null;
-
-        alert("Message vocal envoyé !");
     };
 
     reader.readAsDataURL(recordedBlob); // transforme le blob en base64
@@ -1451,9 +1641,10 @@ function uploadAudio() {
 
 function cancelAudio() {
     recordedBlob = null;
-    document.getElementById('audio-preview').style.display = "none";// transforme le blob en base64 cool
+    document.getElementById('audio-preview').style.display = "none";
     document.getElementById('audio-player').src = "";
 }
+
 function handleImageUpload(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -1485,31 +1676,95 @@ function openImagePopup(src) {
     popup.style.display = "flex";
 }
 
+//message vu, domcontentloaded fusionné 
+// ✅ Version nettoyée du DOMContentLoaded fusionné et patché
+
 document.addEventListener("DOMContentLoaded", function () {
-    const popup = document.getElementById("image-popup");
-    const popupImg = document.getElementById("popup-img");
-    const closeBtn = document.getElementById("close-popup-btn");
-    const popupInner = document.getElementById("popup-inner");
+  console.log("✅ DOMContentLoaded exécuté");
 
-    // ✖ Fermer avec le bouton
+  // ✅ Notification d'entrée
+  showNotification();
+
+  // ✅ Login par touche Enter
+  const loginContainer = document.getElementById("login-container");
+  if (loginContainer) {
+    loginContainer.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        console.log("⏎ Entrée détectée dans login-container");
+        const loginBtn = document.querySelector(".login-button");
+        if (loginBtn) {
+          console.log("🚪 Clic simulé sur bouton login");
+          loginBtn.click();
+        }
+      }
+    });
+  }
+
+  // ✅ Bouton de login (fonction joinRoom déjà définie)
+  const loginBtn = document.querySelector(".login-button");
+  if (loginBtn) {
+    console.log("🎯 Bouton login trouvé et listener attaché");
+    loginBtn.onclick = () => {
+      console.log("⚡ joinRoom() déclenché par clic");
+      joinRoom();
+    };
+  }
+
+  // ✅ Chargement des emojis
+  console.log("😀 Chargement des emojis...");
+  loadEmojis();
+
+  // ✅ Envoi du message avec Enter
+  const messageInput = document.getElementById("message-input");
+  if (messageInput) {
+    messageInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        console.log("✉️ Message envoyé via Entrée");
+        sendMessage();
+      }
+    });
+  }
+
+  // ✅ Theme toggle 🌙/☀️
+  const toggle = document.getElementById('theme-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const theme = isDark ? lightTheme : darkTheme;
+      Object.entries(theme).forEach(([key, val]) => {
+        document.documentElement.style.setProperty(key, val);
+      });
+      toggle.textContent = isDark ? '☀️' : '🌙';
+      isDark = !isDark;
+    });
+  }
+
+  // ✅ Gestion du popup d'image (ouvrir, fermer, échap)
+  const popup = document.getElementById("image-popup");
+  const popupImg = document.getElementById("popup-img");
+  const closeBtn = document.getElementById("close-popup-btn");
+  const popupInner = document.getElementById("popup-inner");
+
+  if (popup && popupImg && closeBtn) {
     closeBtn.addEventListener("click", () => {
-        popup.style.display = "none";
+      popup.style.display = "none";
     });
 
-    // 🖱️ Fermer en cliquant en dehors de l'image ou du bouton
     popup.addEventListener("click", (e) => {
-        if (!popupImg.contains(e.target) && !closeBtn.contains(e.target)) {
-            popup.style.display = "none";
-        }
+      if (!popupImg.contains(e.target) && !closeBtn.contains(e.target)) {
+        popup.style.display = "none";
+      }
     });
 
-    // ⌨️ Fermer avec la touche Échap
     document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") {
-            popup.style.display = "none";
-        }
+      if (e.key === "Escape") {
+        popup.style.display = "none";
+      }
     });
+  }
 });
+
+
 setInterval(() => {
   document.querySelectorAll('.message').forEach(msg => {
     const ts = msg.dataset.timestamp;
@@ -1640,7 +1895,66 @@ function activateStealth() {
 function quitStealthSafely() {
   window.location.href = "https://www.google.com";
 }
+// 🎨 Système de Dark/Light mode
+const lightTheme = {
+  '--bg-color': '#ffffff',
+  '--text-color': '#1a1a1a',
+  '--accent-color': '#0055ff',
+  '--button-bg': '#dddddd',
+  '--button-hover-bg': '#cccccc',
+  '--message-color-user1': 'linear-gradient(135deg, #1976d2, #90caf9)',
+  '--message-color-user2': '#e0e0e0'
+};
 
+const darkTheme = {
+  '--bg-color': '#1f1f1f',
+  '--text-color': '#ffffff',
+  '--accent-color': '#ffd700',
+  '--button-bg': '#5a5a5a',
+  '--button-hover-bg': '#4c4c4c',
+  '--message-color-user1': 'linear-gradient(135deg, #4e54c8, #8f94fb)',
+  '--message-color-user2': '#3a3a3a'
+};
+
+let isDark = true; // Thème par défaut : sombre
+
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('theme-toggle');
+  if (!toggle) return;
+
+  toggle.addEventListener('click', () => {
+    const theme = isDark ? lightTheme : darkTheme;
+    Object.entries(theme).forEach(([key, val]) => {
+      document.documentElement.style.setProperty(key, val);
+    });
+
+    toggle.textContent = isDark ? '☀️' : '🌙';
+    isDark = !isDark;
+  });
+});
+//message vu function
+function updateSeenStatus(msgDiv, data, key) {
+  if (data.user !== username) {
+    msgDiv.addEventListener("mouseenter", () => {
+      if (!data.seen) {
+        db.child("messages").child(key).update({ seen: true });
+      }
+    });
+  } else if (data.user === username && data.seen) {
+    // ✅ Si c'est ton message et qu'il a été vu : afficher la coche
+    const seenCheck = document.createElement("span");
+    seenCheck.className = "seen-check";
+
+    // ✅ Petite icône SVG (WhatsApp-style)
+seenCheck.innerHTML = `
+  <svg viewBox="0 0 24 24">
+    <path d="M1 13l4 4L23 3M10 14l4 4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+`;
+
+    msgDiv.appendChild(seenCheck);
+  }
+}
 </script>
 
 </body>
