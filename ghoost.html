@@ -887,6 +887,46 @@ min-height: 120px;
   stroke: #00ff88; /* ou #ffd700 pour doré */
 }
 
+/* ============================= */
+/* ✅ Ajout pour l’alignement    */
+/* ============================= */
+
+#input-section { /* déjà défini plus haut, on complète si besoin */ }
+
+.compose-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* emoji | input | envoyer */
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.tools-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Le champ prend tout l’espace restant et perd son margin-bottom */
+#message-input {
+  width: 100%;
+  margin: 0;
+  background-color: #444;
+  color: #fff;
+}
+
+/* Accent visuel léger sur le bouton Envoyer */
+.send-btn {
+  background: linear-gradient(145deg, #3a3a3a, #222);
+  border: 1px solid #ffd70033;
+  box-shadow: 0 4px 10px rgba(255, 215, 0, 0.15);
+}
+
+@media (max-width: 600px) {
+  .compose-row { gap: 6px; }
+  .tools-row   { gap: 6px; }
+}
 </style>
 </head>
 <body>
@@ -951,33 +991,45 @@ min-height: 120px;
         <button onclick="cancelAudio()" class="cancel-audio">❌ Annuler</button>
       </div>
 
+      <!-- ✅ Zone d’entrée corrigée -->
       <div id="input-section">
-        <button class="icon-button" onclick="toggleEmojiPicker()" title="Emoji">
-          <svg viewBox="0 0 24 24"><path d="M12 22C6.48 22 2 17.52 2 12s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-4a6 6 0 006-6H6a6 6 0 006 6z"/></svg>
-        </button>
-        <input type="text" id="message-input" placeholder="Écrivez un message">
-        <button class="icon-button" onclick="sendMessage()" title="Envoyer">
-          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
-        </button>
-        <button class="icon-button" onclick="toggleRecording()" id="record-btn" title="Audio">
-          <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm6-3a6 6 0 01-12 0H4a8 8 0 0016 0h-2zm-6 8c2.21 0 4-1.79 4-4h-2a2 2 0 01-4 0H8c0 2.21 1.79 4 4 4z"/></svg>
-        </button>
-        <input type="file" id="image-input" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
-        <button class="icon-button" onclick="document.getElementById('image-input').click()" title="Image">
-          <svg viewBox="0 0 24 24"><path d="M21 19V5H3v14h18zm-2-2H5V7h14v10z"/></svg>
-        </button>
-        <button class="icon-button" onclick="quitRoom()" title="Quitter">
-          <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59z"/></svg>
-        </button>
+        <!-- Ligne 1 : Emoji + input + Envoyer -->
+        <div class="compose-row">
+          <button class="icon-button" onclick="toggleEmojiPicker()" title="Emoji">
+            <svg viewBox="0 0 24 24"><path d="M12 22C6.48 22 2 17.52 2 12s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-4a6 6 0 006-6H6a6 6 0 006 6z"/></svg>
+          </button>
+
+          <input type="text" id="message-input" placeholder="Écrivez un message">
+
+          <button class="icon-button send-btn" onclick="sendMessage()" title="Envoyer">
+            <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+          </button>
+        </div>
+
+        <!-- Ligne 2 : autres outils -->
+        <div class="tools-row">
+          <button class="icon-button" onclick="toggleRecording()" id="record-btn" title="Audio">
+            <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm6-3a6 6 0 01-12 0H4a8 8 0 0016 0h-2zm-6 8c2.21 0 4-1.79 4-4h-2a2 2 0 01-4 0H8c0 2.21 1.79 4 4 4z"/></svg>
+          </button>
+
+          <input type="file" id="image-input" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
+          <button class="icon-button" onclick="document.getElementById('image-input').click()" title="Image">
+            <svg viewBox="0 0 24 24"><path d="M21 19V5H3v14h18zm-2-2H5V7h14v10z"/></svg>
+          </button>
+
+          <button class="icon-button" onclick="quitRoom()" title="Quitter">
+            <svg viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59z"/></svg>
+          </button>
+        </div>
       </div>
 
       <div id="emoji-picker"></div>
-<div id="image-popup" class="image-popup">
-  <div id="popup-inner" class="popup-inner">
-    <img id="popup-img" class="popup-img" />
-    <button id="close-popup-btn" class="close-popup-btn">✖</button>
-  </div>
-</div>
+      <div id="image-popup" class="image-popup">
+        <div id="popup-inner" class="popup-inner">
+          <img id="popup-img" class="popup-img" />
+          <button id="close-popup-btn" class="close-popup-btn">✖</button>
+        </div>
+      </div>
     </div>
 
     <!-- Camouflage ne sert à rien  -->
