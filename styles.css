@@ -56,7 +56,10 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
+  height: 100vh;          /* ✅ page = hauteur écran */
+  overflow: hidden;       /* ✅ on bloque le scroll global */
 }
+
 
 /* Utils */
 
@@ -81,11 +84,11 @@ body {
 /* Screens */
 
 .screen {
-  min-height: 100vh;
+  height: 100vh;          /* ✅ plein écran */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 0;             /* optionnel, mais propre */
 }
 
 .screen-login {
@@ -179,17 +182,18 @@ body {
 .chat-wrapper {
   width: 100%;
   max-width: 1100px;
+  height: 100vh;          /* ✅ prend toute la hauteur */
 }
 
 .chat-container {
   width: 100%;
-  height: calc(100vh - 32px);
+  height: 100%;           /* ✅ plus de calc() */
   background: rgba(35, 35, 35, 0.96);
   border-radius: 18px;
   display: flex;
   flex-direction: column;
   box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.6);
-  overflow: hidden;
+  overflow: hidden;       /* ✅ rien ne dépasse */
 }
 
 /* Header */
@@ -272,12 +276,15 @@ body {
 
 /* Main content */
 
-.chat-main {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  min-height: 0;
+.messages-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px 10px;
+  min-width: 0;
+  height: 100%;           /* ✅ occupe toute la colonne */
+  min-height: 0;          /* ✅ permet à .messages-list de scroller */
 }
+
 
 /* Users panel */
 
@@ -375,12 +382,14 @@ body {
 /* Messages list */
 
 .messages-list {
-  flex: 1;
-  overflow-y: auto;
+  flex: 1;                /* ✅ prend tout l’espace dispo */
+  overflow-y: auto;       /* ✅ seul endroit qui scrolle */
   padding: 8px 6px 4px;
   background-color: #2e2e2e;
   border-radius: 10px;
+  min-height: 0;          /* ✅ important pour que flex gère bien */
 }
+
 
 /* Message bubble — version type app de messagerie */
 
@@ -606,7 +615,10 @@ body {
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px solid #444;
+  flex-shrink: 0;         /* ✅ ne se fait pas écraser par le scroll */
+  background: #262626;    /* ✅ toujours lisible */
 }
+
 
 .compose-row {
   display: grid;
