@@ -93,10 +93,8 @@ const emojis = ["😀", "😂", "😍", "😎", "😊", "😢", "😡", "👍", 
 // DOM ready
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ DOMContentLoaded");
-
   const loginContainer = document.getElementById("login-container");
-  const chatScreen = document.querySelector(".screen-chat");
+  const chatScreen = document.getElementById("chat-screen");
   const chatContainer = document.getElementById("chat-container");
   const loginBtn = document.querySelector(".login-button");
   const messageInput = document.getElementById("message-input");
@@ -176,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // On masque l'écran chat au départ
+  // Au début : on masque le chat
   if (chatScreen) chatScreen.classList.add("hidden");
   if (chatContainer) chatContainer.classList.add("hidden");
 });
@@ -217,7 +215,6 @@ function joinRoom() {
       return;
     }
 
-    // On pointe db sur rooms/<roomName>
     db = roomRef;
 
     db.once("value").then((snapshot) => {
@@ -245,7 +242,7 @@ function enterChat() {
   document.getElementById("room-name-display").textContent = "Lieu : " + roomName;
 
   const loginContainer = document.getElementById("login-container");
-  const chatScreen = document.querySelector(".screen-chat");
+  const chatScreen = document.getElementById("chat-screen");
   const chatContainer = document.getElementById("chat-container");
 
   loginContainer.classList.add("hidden");
@@ -728,7 +725,7 @@ function quitRoom() {
     messageListener = null;
   }
 
-  const chatScreen = document.querySelector(".screen-chat");
+  const chatScreen = document.getElementById("chat-screen");
   const chatContainer = document.getElementById("chat-container");
   const loginContainer = document.getElementById("login-container");
 
