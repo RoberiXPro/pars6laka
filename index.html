@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>GHOOST</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+  <!-- App -->
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <!-- Notification toast (optionnel) -->
+  <div id="notification" class="toast" style="display:none;">
+    Nouveau message reçu 💬
+  </div>
+
+  <!-- Écran login -->
+  <div id="login-container" class="screen screen-login">
+    <h1 class="app-title">🗨️ GHOOST 👻</h1>
+    <div class="login-card">
+      <h2 class="login-title">Connexion</h2>
+
+      <div class="input-group">
+        <label for="username">🕤 Votre pseudo</label>
+        <input type="text" id="username" placeholder="Entrer votre pseudo ICI" required />
+      </div>
+
+      <div class="input-group">
+        <label for="room-name-input">🏠 Lieu de RDV</label>
+        <input type="text" id="room-name-input" placeholder="*******" required />
+      </div>
+
+      <div class="input-group">
+        <label for="password-input">🔐 Mot de passe</label>
+        <input type="password" id="password-input" placeholder="*******" required />
+      </div>
+
+      <button class="login-button">🚪 Se connecter</button>
+    </div>
+  </div>
+
+  <!-- Écran chat -->
+  <div class="screen screen-chat hidden">
+    <div class="chat-wrapper">
+      <div id="chat-container" class="chat-container hidden">
+        <!-- Header -->
+        <header class="chat-header">
+          <div class="room-info">
+            <div id="room-name-display" class="room-title"></div>
+            <div class="status-pill">Connecté</div>
+          </div>
+
+          <div class="header-actions">
+            <button id="theme-toggle" class="theme-toggle" title="Thème clair/sombre">🌙</button>
+
+            <div id="theme-selector" class="theme-selector">
+              <label for="theme-select" class="theme-label">🎨 Thème :</label>
+              <select id="theme-select" class="theme-select">
+                <option value="default">Sombre</option>
+                <option value="ocean">Océan</option>
+                <option value="forest">Forêt</option>
+                <option value="rosewood">Rosewood</option>
+                <option value="noir">Nuit discrète</option>
+                <option value="midnight">Minuit</option>
+                <option value="sepia">Sépia</option>
+                <option value="galaxy">Galaxie</option>
+              </select>
+            </div>
+          </div>
+        </header>
+
+        <!-- Contenu principal : utilisateurs + messages -->
+        <div class="chat-main">
+          <aside class="sidebar users-panel">
+            <h2>En ligne</h2>
+            <ul id="online-users"></ul>
+          </aside>
+
+          <section class="messages-panel">
+            <div id="reply-container" class="reply-container">
+              <span id="reply-message"></span>
+              <button onclick="cancelReply()" class="btn-cancel-reply">Annuler</button>
+            </div>
+
+            <div id="messages" class="messages-list"></div>
+
+            <div id="audio-preview" class="audio-preview">
+              <audio id="audio-player" controls></audio>
+              <div class="audio-actions">
+                <button onclick="uploadAudio()">✅ Envoyer le vocal</button>
+                <button onclick="cancelAudio()" class="cancel-audio">❌ Annuler</button>
+              </div>
+            </div>
+
+            <!-- Composer -->
+            <div id="input-section" class="input-section">
+              <div class="compose-row">
+                <button class="icon-button" onclick="toggleEmojiPicker()" title="Emoji">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 22C6.48 22 2 17.52 2 12s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10zm0-4a6 6 0 006-6H6a6 6 0 006 6z"/>
+                  </svg>
+                </button>
+
+                <input type="text" id="message-input" placeholder="Écrivez un message">
+
+                <button class="icon-button send-btn" onclick="sendMessage()" title="Envoyer">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="tools-row">
+                <button class="icon-button" onclick="toggleRecording()" id="record-btn" title="Audio">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3zm6-3a6 6 0 01-12 0H4a8 8 0 0016 0h-2zm-6 8c2.21 0 4-1.79 4-4h-2a2 2 0 01-4 0H8c0 2.21 1.79 4 4 4z"/>
+                  </svg>
+                </button>
+
+                <input type="file" id="image-input" accept="image/*" multiple style="display:none;">
+                <button class="icon-button" onclick="document.getElementById('image-input').click()" title="Image">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M21 19V5H3v14h18zm-2-2H5V7h14v10z"/>
+                  </svg>
+                </button>
+
+                <button class="icon-button" onclick="quitRoom()" title="Quitter">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Stealth -->
+      <div id="stealth-screen" class="stealth-screen">
+        <p class="stealth-question">Résous : 9 x 2548 + 236</p>
+        <input id="stealth-code" class="stealth-input" placeholder="Tape ici">
+        <button onclick="quitStealthSafely()" class="stealth-quit">Quitter discrètement</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emoji global -->
+  <div id="emoji-picker" class="emoji-picker"></div>
+
+  <!-- Popup image -->
+  <div id="image-popup" class="image-popup">
+    <div id="popup-inner" class="popup-inner">
+      <img id="popup-img" class="popup-img" />
+      <button id="close-popup-btn" class="close-popup-btn">✖</button>
+    </div>
+  </div>
+
+  <!-- Boutons flottants -->
+  <div class="floating-buttons">
+    <button class="icon-button danger-button" onclick="panicWipe()" title="Panic">🧨</button>
+    <button class="icon-button stealth-button" onclick="activateStealth()" title="Camouflage">🕶️</button>
+  </div>
+
+  <footer class="app-footer">
+    &copy; RoberiX 2025
+  </footer>
+</body>
+</html>
