@@ -16,7 +16,7 @@
   <script defer src="app.js"></script>
 </head>
 <body>
-  <!-- Notification toast (optionnel) -->
+  <!-- Notification toast -->
   <div id="notification" class="toast" style="display:none;">
     Nouveau message reçu 💬
   </div>
@@ -47,7 +47,7 @@
   </div>
 
   <!-- Écran chat -->
-  <div class="screen screen-chat hidden">
+  <div id="chat-screen" class="screen screen-chat hidden">
     <div class="chat-wrapper">
       <div id="chat-container" class="chat-container hidden">
         <!-- Header -->
@@ -76,13 +76,15 @@
           </div>
         </header>
 
-        <!-- Contenu principal : utilisateurs + messages -->
+        <!-- Main layout -->
         <div class="chat-main">
+          <!-- Utilisateurs en ligne -->
           <aside class="sidebar users-panel">
             <h2>En ligne</h2>
             <ul id="online-users"></ul>
           </aside>
 
+          <!-- Messages + input -->
           <section class="messages-panel">
             <div id="reply-container" class="reply-container">
               <span id="reply-message"></span>
@@ -99,7 +101,7 @@
               </div>
             </div>
 
-            <!-- Composer -->
+            <!-- Zone de saisie -->
             <div id="input-section" class="input-section">
               <div class="compose-row">
                 <button class="icon-button" onclick="toggleEmojiPicker()" title="Emoji">
@@ -142,7 +144,7 @@
         </div>
       </div>
 
-      <!-- Stealth -->
+      <!-- Stealth screen -->
       <div id="stealth-screen" class="stealth-screen">
         <p class="stealth-question">Résous : 9 x 2548 + 236</p>
         <input id="stealth-code" class="stealth-input" placeholder="Tape ici">
