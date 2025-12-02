@@ -382,13 +382,14 @@ body {
 /* Messages list */
 
 .messages-list {
-  flex: 1;                /* ✅ prend tout l’espace dispo */
-  overflow-y: auto;       /* ✅ seul endroit qui scrolle */
-  padding: 8px 6px 4px;
+  flex: 1;                      /* ✅ utilise tout l’espace dispo au-dessus de l’input */
+  overflow-y: auto;             /* ✅ seul endroit qui scrolle */
+  padding: 8px 6px 12px;
   background-color: #2e2e2e;
   border-radius: 10px;
-  min-height: 0;          /* ✅ important pour que flex gère bien */
+  min-height: 0;
 }
+
 
 
 /* Message bubble — version type app de messagerie */
@@ -613,10 +614,12 @@ body {
 
 .input-section {
   margin-top: 6px;
-  padding-top: 6px;
+  padding: 8px 8px calc(10px + env(safe-area-inset-bottom, 0px)); /* ✅ petit coussin pour mobile */
   border-top: 1px solid #444;
-  flex-shrink: 0;         /* ✅ ne se fait pas écraser par le scroll */
-  background: #262626;    /* ✅ toujours lisible */
+  flex-shrink: 0;               /* ✅ ne se fait jamais écraser par les messages */
+  background: #262626;
+  position: relative;           /* ✅ annule un éventuel position: sticky/fixed d’avant */
+  z-index: 5;                   /* ✅ passe au-dessus du contenu */
 }
 
 
@@ -871,7 +874,7 @@ body {
   }
 
   .chat-main {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr;  /* ✅ sur mobile : users en haut, messages en dessous */
   }
 
   .users-panel {
@@ -884,7 +887,11 @@ body {
 
   .messages-panel {
     order: 1;
+    min-height: 0;
   }
+
+  /* ... le reste de ton @media */
+}
 
   .screen-login .app-title {
     font-size: 2rem;
@@ -909,4 +916,7 @@ body {
     width: 20px;
     height: 20px;
   }
+}
+#input-section {
+  position: relative !important;
 }
