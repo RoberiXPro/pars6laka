@@ -27,7 +27,7 @@ let childRemovedListenerSet = false;
 let passwordValue = "";
 let isDark = true;
 
-const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
+const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/93/93-preview.mp3');
 
 // Hauteur d'écran fiable sur mobile: évite que la barre navigateur pousse l'input hors écran
 function syncAppHeight() {
