@@ -29,6 +29,12 @@ let isDark = true;
 
 const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3');
 
+// Hauteur d'écran fiable sur mobile: évite que la barre navigateur pousse l'input hors écran
+function syncAppHeight() {
+  const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', `${height}px`);
+}
+
 // Thèmes light/dark
 const lightTheme = {
   '--bg-color': '#ffffff',
@@ -101,6 +107,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.getElementById("theme-toggle");
   const themeSelect = document.getElementById("theme-select");
   const imageInput = document.getElementById("image-input");
+
+  syncAppHeight();
+  window.addEventListener("resize", syncAppHeight);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", syncAppHeight);
+    window.visualViewport.addEventListener("scroll", syncAppHeight);
+  }
 
   // Login avec Enter
   if (loginContainer) {
@@ -395,6 +408,8 @@ function sendMessage() {
   msgRef.set(msgData);
 
   messageInput.value = "";
+  messageInput.focus();
+  requestAnimationFrame(scrollToBottom);
 }
 
 function loadMessages() {
@@ -460,6 +475,7 @@ function displayMessage(key, data) {
     content = document.createElement("img");
     content.src = data.imageBase64;
     content.className = "image-message";
+    content.onload = scrollToBottom;
     content.onclick = () => openImagePopup(data.imageBase64);
   } else {
     content = document.createElement("div");
